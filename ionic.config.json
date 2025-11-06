@@ -1,0 +1,7 @@
+{
+  "name": "Move360",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
