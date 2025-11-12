@@ -1,0 +1,38 @@
+<div class="form-card">
+
+  <h1 class="bienvenida-title">¿Olvidaste tu Contraseña?</h1>
+
+  <p class="subtitle-text">
+    No te preocupes, es algo que pasa.
+    Por favor ingresa la dirección de correo electrónico asociada a tu cuenta.
+    Te enviaremos un código de verificación a esa dirección.
+  </p>
+
+  <form (ngSubmit)="onSubmit()">
+    <ion-item lines="none">
+      <ion-icon slot="start" name="mail-outline" color="medium"></ion-icon>
+      <ion-input label="Correo Electrónico"
+                labelPlacement="floating"
+                type="email"
+                required
+                [(ngModel)]="email"
+                name="email">
+      </ion-input>
+    </ion-item>
+
+    <ion-button expand="block" type="submit" class="login-button"
+                 [style.--background]="'#000000'"
+                 [style.--color]="'#ffffff'">
+      Enviar Código
+    </ion-button>
+
+  </form>
+  <div class="footer-link-container">
+    <ion-button expand="block" fill="clear" color="medium" (click)="onGoToLogin()" class="login-link">
+        ¿Ya tienes una cuenta? Iniciar Sesión
+    </ion-button>
+  </div>
+
+</div>
+
+<p class="copyright-text">Todos los derechos reservados a Move360®</p>

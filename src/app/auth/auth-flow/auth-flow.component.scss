@@ -1,0 +1,49 @@
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.login-split {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+    height: 100%;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media (max-width: 991.98px) {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+.login-image-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    @media (max-width: 991.98px) {
+        display: none;
+    }
+}
+
+.welcome-art {
+    max-width: 100%;
+    height: auto;
+}
+
+
+.login-form-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+    height: 100%; 
+}

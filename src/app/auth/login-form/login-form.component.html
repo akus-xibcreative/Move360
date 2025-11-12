@@ -1,0 +1,40 @@
+
+<div class="form-card">
+  <h1 class="bienvenida-title">Iniciar Sesión</h1>
+  <form (ngSubmit)="onSubmit()">
+    <ion-item lines="none">
+      <ion-icon slot="start" name="mail-outline" color="medium"></ion-icon>
+      <ion-input label="Correo Electrónico"
+                labelPlacement="floating"
+                type="email"
+                required
+                [(ngModel)]="email"
+                name="email">
+      </ion-input>
+    </ion-item>
+
+    <ion-item lines="none">
+      <ion-icon slot="start" name="lock-closed-outline" color="medium"></ion-icon>
+      <ion-input label="Contraseña"
+                labelPlacement="floating"
+                type="password"
+                required
+                [(ngModel)]="password"
+                name="password">
+      </ion-input>
+    </ion-item>
+
+    <div class="forgot-password-container">
+        <ion-button expand="block" fill="clear" color="medium" (click)="onGoToRecuperar()" class="forgot-password">
+            ¿Olvidaste tu Contraseña?
+        </ion-button>
+    </div>
+
+    <ion-button expand="block" type="submit" class="login-button">
+      Acceder
+    </ion-button>
+  </form>
+
+</div>
+
+<p class="copyright-text">Todos los derechos reservados a Move360®</p>

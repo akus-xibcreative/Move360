@@ -1,0 +1,63 @@
+:host {
+    display: block;
+    width: 100%;
+    max-width: 450px;
+}
+
+.form-card {
+    background: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+.bienvenida-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+ion-item {
+    --border-radius: 8px;
+    --padding-start: 15px;
+    --background: #ffffff;
+    margin-bottom: 16px;
+    --border-color: #000000;
+    --border-width: 1px;
+    --inner-border-width: 0 0 0 0;
+    border: 1px solid #000000;
+    border-radius: 8px;
+}
+
+.login-button {
+    --background: #000000;
+    --color: #ffffff;
+    --border-radius: 8px;
+    height: 48px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.forgot-password-container {
+    text-align: right;
+    margin-bottom: 5px;
+}
+
+.forgot-password {
+    color: #000000;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    --padding-end: 0;
+    --padding-start: 0;
+}
+
+.copyright-text {
+    font-size: 0.75em;
+    color: #333; 
+    margin-top: 30px;
+    text-align: center;
+}

@@ -1,0 +1,35 @@
+<div class="form-card">
+  <h1 class="ion-text-center bienvenida-title">Verificación de Código</h1>
+
+  <p class="ion-text-center description-text">
+    Hemos enviado un código de 6 dígitos a tu correo. Por favor, ingrésalo a continuación para continuar.
+  </p>
+
+  <form [formGroup]="codeForm" (ngSubmit)="onSubmit()">
+    <ion-item class="ion-margin-vertical custom-input" fill="outline">
+      <ion-label position="floating">Código de Verificación (6 dígitos)</ion-label>
+      <ion-input type="number" formControlName="code"></ion-input>
+      <ion-icon slot="start" name="key-outline"></ion-icon>
+    </ion-item>
+    <div *ngIf="codeForm.get('code')?.invalid && codeForm.get('code')?.touched" class="error-message">
+      <span *ngIf="codeForm.get('code')?.errors?.['required']">El código es obligatorio.</span>
+      <span *ngIf="codeForm.get('code')?.errors?.['minlength'] || codeForm.get('code')?.errors?.['maxlength']">Debe ser de 6 dígitos.</span>
+    </div>
+
+    <p class="ion-text-end back-to-login" (click)="goToLogin.emit()">
+      Volver a Iniciar Sesión
+    </p>
+
+    <ion-button
+      expand="block"
+      type="submit"
+      [disabled]="codeForm.invalid"
+      class="ion-margin-top login-button">
+      VERIFICAR CÓDIGO
+    </ion-button>
+
+  </form>
+  <p class="copyright-text ion-text-center ion-padding-top">
+    Todos los derechos reservados a Jidokwan Jaguares Taekwondo®
+  </p>
+</div>

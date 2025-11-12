@@ -1,0 +1,36 @@
+<div class="login-split ion-padding">
+
+
+  <div class="login-image-section ion-hide-md-down">
+    <img
+      [src]="estadoActual === 'login' ? 'assets/icon/undraw_login_weas.png.png' :
+            estadoActual === 'nueva-contrasena' ? 'assets/icon/undraw_login_weas.png.png' :
+            'assets/icon/undraw_login_weas.png.png'"
+      alt="Arte de Bienvenida o Recuperación"
+      class="welcome-art"
+    />
+  </div>
+
+  <div class="login-form-section">
+    <app-login-form *ngIf="estadoActual === 'login'"
+      (loginSubmit)="handleLogin($event)"
+      (goToRecuperar)="cambiarEstado('recuperar-email')">
+    </app-login-form>
+
+    <app-recovery-email-form *ngIf="estadoActual === 'recuperar-email'"
+      (emailSubmit)="handleRecuperarEmail($event)"
+      (goToLogin)="cambiarEstado('login')">
+    </app-recovery-email-form>
+
+    <app-verification-code-form *ngIf="estadoActual === 'verificar-codigo'"
+      (codeSubmit)="handleVerificarCodigo($event)"
+      (goToLogin)="cambiarEstado('login')">
+    </app-verification-code-form>
+
+    <app-new-password-form *ngIf="estadoActual === 'nueva-contrasena'"
+      (passwordSubmit)="handleNuevaContrasena($event)"
+      (goToLogin)="cambiarEstado('login')">
+    </app-new-password-form>
+
+  </div>
+</div>
