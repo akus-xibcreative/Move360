@@ -21,6 +21,7 @@
     color: #333;
     margin-bottom: 15px;
     white-space: nowrap;
+    text-align: center;
 }
 
 .subtitle-text {
@@ -30,7 +31,12 @@
     line-height: 1.5;
 }
 
+/* ------------------------------------------------------------------- */
+/* ESTILOS DEL CAMPO DE INPUT (Alineación y Color Negro) */
+/* ------------------------------------------------------------------- */
+
 ion-item {
+    /* Aquí definimos el estilo de borde que ya tenías */
     --border-radius: 8px;
     --padding-start: 15px;
     --background: #ffffff;
@@ -41,6 +47,19 @@ ion-item {
     --inner-border-width: 0 0 0 0;
     border: 1px solid #000000;
     border-radius: 8px;
+
+    /* Para el ícono */
+    ion-icon {
+        color: #000000 !important; /* Asegurar color negro */
+    }
+
+    /* Estilos para el ion-input DENTRO del ion-item */
+    ion-input {
+        /* Corrección CLAVE: Texto escrito y placeholder en color negro */
+        --color: #000000;
+        --placeholder-color: #000000;
+        --placeholder-opacity: 1; /* Asegura que el placeholder no se vea gris */
+    }
 }
 
 .login-button {
@@ -53,29 +72,31 @@ ion-item {
     margin-bottom: 15px;
 }
 
+/* ------------------------------------------------------------------- */
+/* ESTILOS DEL ENLACE DE INICIAR SESIÓN */
+/* ------------------------------------------------------------------- */
 .footer-link-container {
-    text-align: center;
+    text-align: right; /* Alineado a la derecha */
     margin-top: 15px;
 }
 
 .login-link {
-    --color: #000000;
-    font-size: 0.9rem;
-    --padding-start: 0;
-    --padding-end: 0;
-}
-
-.login-link::part(native) {
-    text-decoration: none;
+    /* Estilo de texto pequeño y negro como en el login */
+    display: inline-block; /* Para que text-align: right funcione en el contenedor */
+    cursor: pointer;
+    color: #000000;
+    font-size: 0.85em; /* Más pequeño */
+    padding: 0;
+    margin: 0;
 }
 
 .login-link:hover {
-    --color: #666;
+    color: #666;
 }
 
 .copyright-text {
     font-size: 0.75em;
-    color: #333; 
+    color: #333;
     margin-top: 30px;
     text-align: center;
 }

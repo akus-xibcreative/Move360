@@ -9,29 +9,35 @@
   </p>
 
   <form (ngSubmit)="onSubmit()">
-    <ion-item lines="none">
+    <!-- Aplicamos clase custom-item para el estilo de borde/color -->
+    <ion-item lines="none" class="custom-item">
       <ion-icon slot="start" name="mail-outline" color="medium"></ion-icon>
-      <ion-input label="Correo Electrónico"
-                labelPlacement="floating"
-                type="email"
-                required
-                [(ngModel)]="email"
-                name="email">
+      <!-- Usamos placeholder en lugar de label/labelPlacement -->
+      <ion-input
+        placeholder="Correo Electrónico"
+        type="email"
+        required
+        [(ngModel)]="email"
+        name="email">
       </ion-input>
     </ion-item>
 
+
+    <div class="footer-link-container">
+      <!-- Cambiamos ion-button por span/a para mejor control de estilo -->
+      <span (click)="onGoToLogin()" class="login-link">
+        ¿Ya tienes una cuenta? Iniciar Sesión
+      </span>
+    </div>
+
     <ion-button expand="block" type="submit" class="login-button"
-                 [style.--background]="'#000000'"
-                 [style.--color]="'#ffffff'">
+              [style.--background]="'#000000'"
+              [style.--color]="'#ffffff'">
       Enviar Código
     </ion-button>
 
   </form>
-  <div class="footer-link-container">
-    <ion-button expand="block" fill="clear" color="medium" (click)="onGoToLogin()" class="login-link">
-        ¿Ya tienes una cuenta? Iniciar Sesión
-    </ion-button>
-  </div>
+
 
 </div>
 

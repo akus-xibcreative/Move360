@@ -1,63 +1,91 @@
-:host {
-    display: block;
+.form-card {
+    // Sombra para el efecto de tarjeta/contorno
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 30px 20px;
+    background: #fff;
     width: 100%;
-    max-width: 450px;
+    max-width: 400px;
 }
 
-.form-card {
-    background: #ffffff;
-    padding: 30px 40px;
-    border-radius: 12px;
-    width: 100%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e0e0e0;
-}
 
 .bienvenida-title {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 25px;
+    text-align: center;
 }
 
-ion-item {
-    --border-radius: 8px;
-    --padding-start: 15px;
-    --background: #ffffff;
-    margin-bottom: 16px;
-    --border-color: #000000;
-    --border-width: 1px;
-    --inner-border-width: 0 0 0 0;
-    border: 1px solid #000000;
+.custom-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    --padding-end: 0;
+    border: 1.5px solid #000;
     border-radius: 8px;
+    margin-bottom: 20px;
+    --background: #fff;
+    ion-icon {
+        color: #000;
+        font-size: 1.5rem;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    ion-input {
+        --color: #000000;
+        --placeholder-color: #000000;
+        --placeholder-opacity: 1;
+        padding-left: 0 !important;
+    }
+}
+
+ion-button[slot="end"] {
+    margin-right: 5px;
+
+    ion-icon {
+        color: #000000 !important;
+    }
+}
+
+
+.forgot-password-container {
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.login-link {
+    cursor: pointer;
+    font-size: 0.85em;
+    color: #000000;
+    text-align: right;
+    width: 100%;
+    display: block;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #555;
+    }
 }
 
 .login-button {
     --background: #000000;
     --color: #ffffff;
-    --border-radius: 8px;
-    height: 48px;
+    --box-shadow: none;
     font-weight: bold;
-    margin-top: 20px;
+    height: 48px;
+    border-radius: 8px;
+    transition: background 0.3s;
+
+    &:hover {
+        --background: #333333;
+    }
 }
 
-.forgot-password-container {
-    text-align: right;
-    margin-bottom: 5px;
-}
-
-.forgot-password {
-    color: #000000;
-    cursor: pointer;
-    font-size: 0.9em;
-    font-weight: 500;
-    --padding-end: 0;
-    --padding-start: 0;
-}
 
 .copyright-text {
-    font-size: 0.75em;
-    color: #333; 
-    margin-top: 30px;
     text-align: center;
+    font-size: 0.75rem;
+    color: #000000;
+    margin-top: 30px;
 }
