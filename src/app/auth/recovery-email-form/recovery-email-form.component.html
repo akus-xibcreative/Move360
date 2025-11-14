@@ -1,6 +1,6 @@
 <div class="form-card">
 
-  <h1 class="bienvenida-title">¿Olvidaste tu Contraseña?</h1>
+  <h1 class="welcome-title">¿Olvidaste tu Contraseña?</h1>
 
   <p class="subtitle-text">
     No te preocupes, es algo que pasa.
@@ -11,9 +11,8 @@
   <form (ngSubmit)="onSubmit()">
     <!-- Aplicamos clase custom-input para el estilo de borde/color -->
     <ion-item class="custom-input" fill="outline">
-      <!-- Usamos placeholder en lugar de label/labelPlacement -->
+      <ion-label position="floating">Correo Electrónico</ion-label>
       <ion-input
-        placeholder="Correo Electrónico"
         type="email"
         required
         [(ngModel)]="email"

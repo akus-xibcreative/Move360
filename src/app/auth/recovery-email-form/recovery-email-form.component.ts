@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import {
   IonItem,
   IonInput,
+  IonLabel,
   IonButton,
   IonIcon
 } from '@ionic/angular/standalone';
@@ -19,9 +20,9 @@ import {
     CommonModule,
     FormsModule,
     IonItem,
+    IonLabel,
     IonInput,
     IonButton,
-    IonIcon
   ],
 })
 export class RecoveryEmailFormComponent {

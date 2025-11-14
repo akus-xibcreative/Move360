@@ -9,7 +9,7 @@
 }
 
 
-.bienvenida-title {
+.welcome-title {
     font-size: 1.8rem;
     font-weight: 700;
     color: #000;
@@ -27,8 +27,8 @@
     --background: #ffffff;
 
     ion-label {
-        color: #000000;
-        font-size: 1rem;
+      color: #000000 !important;
+      opacity: 1 !important;
     }
 
     ion-input {
@@ -53,14 +53,6 @@ ion-input-password-toggle {
       font-size: 1.2rem !important;
   }
 }
-
-
-/* Se mantiene la regla de visibilidad por si quieres activarla después, aunque no sea obligatoria */
-.custom-item ion-input[placeholder-shown] ion-input-password-toggle {
-  /* Si el campo está vacío, se oculta (o si lo prefieres visible, elimina esta regla) */
-  --display: none;
-}
-
 
 .forgot-password-container {
     width: 100%;

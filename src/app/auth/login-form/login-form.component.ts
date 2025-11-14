@@ -13,29 +13,18 @@ export class LoginFormComponent {
   email = '';
   password = '';
 
-  passwordVisible: boolean = false;
-  get passwordType(): string {
-    return this.passwordVisible ? 'text' : 'password';
-  }
+  passwordVisible = false;
+  get passwordType(): string { return this.passwordVisible ? 'text' : 'password'; }
 
-  @Output() goToRecuperar = new EventEmitter<void>();
+  @Output() goToRecovery = new EventEmitter<void>();
+  @Output() loginSubmit = new EventEmitter<{ email: string; password: string }>();
 
-  @Output() loginSubmit = new EventEmitter<{ email: string, password: string }>();
-
-  constructor() {}
-
-
-  togglePasswordVisibility(): void {
-    this.passwordVisible = !this.passwordVisible;
-  }
+  togglePasswordVisibility(): void { this.passwordVisible = !this.passwordVisible; }
 
   onSubmit(): void {
-    if (this.email && this.password) {
-      this.loginSubmit.emit({ email: this.email, password: this.password });
-    }
+    if (!this.email || !this.password) return;
+    this.loginSubmit.emit({ email: this.email, password: this.password });
   }
 
-  onGoToRecuperar(): void {
-    this.goToRecuperar.emit();
-  }
+  onGoToRecovery(): void { this.goToRecovery.emit(); }
 }

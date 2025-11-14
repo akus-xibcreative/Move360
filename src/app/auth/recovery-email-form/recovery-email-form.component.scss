@@ -15,7 +15,7 @@
     border: 1px solid #e0e0e0;
 }
 
-.bienvenida-title {
+.welcome-title {
     font-size: 1.5rem;
     font-weight: bold;
     color: #333;
@@ -47,6 +47,11 @@ ion-item {
     --inner-border-width: 0 0 0 0;
     border: 1px solid #000000;
     border-radius: 8px;
+
+    ion-label {
+      color: #000000 !important;
+      opacity: 1 !important;
+    }
 
     /* Para el ícono */
     ion-icon {

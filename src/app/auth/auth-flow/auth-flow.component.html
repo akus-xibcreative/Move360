@@ -3,8 +3,8 @@
 
   <div class="login-image-section ion-hide-md-down">
     <img
-      [src]="estadoActual === 'login' ? 'assets/icon/undraw_secure-login.svg' :
-            estadoActual === 'nueva-contrasena' ? 'assets/icon/undraw_secure-login.svg' :
+      [src]="currentState === 'login' ? 'assets/icon/undraw_secure-login.svg' :
+            currentState === 'new-password' ? 'assets/icon/undraw_secure-login.svg' :
             'assets/icon/undraw_secure-login.svg'"
       alt="Arte de Bienvenida o Recuperación"
       class="welcome-art"
@@ -12,24 +12,23 @@
   </div>
 
   <div class="login-form-section">
-    <app-login-form *ngIf="estadoActual === 'login'"
-      (loginSubmit)="handleLogin($event)"
-      (goToRecuperar)="cambiarEstado('recuperar-email')">
+    <app-login-form *ngIf="currentState === 'login'"
+      (goToRecovery)="changeState('recover-email')">
     </app-login-form>
 
-    <app-recovery-email-form *ngIf="estadoActual === 'recuperar-email'"
-      (emailSubmit)="handleRecuperarEmail($event)"
-      (goToLogin)="cambiarEstado('login')">
+    <app-recovery-email-form *ngIf="currentState === 'recover-email'"
+      (emailSubmit)="changeState('verify-code')"
+      (goToLogin)="changeState('login')">
     </app-recovery-email-form>
 
-    <app-verification-code-form *ngIf="estadoActual === 'verificar-codigo'"
-      (codeSubmit)="handleVerificarCodigo($event)"
-      (goToLogin)="cambiarEstado('login')">
+    <app-verification-code-form *ngIf="currentState === 'verify-code'"
+      (codeSubmit)="changeState('new-password')"
+      (goToLogin)="changeState('login')">
     </app-verification-code-form>
 
-    <app-new-password-form *ngIf="estadoActual === 'nueva-contrasena'"
-      (passwordSubmit)="handleNuevaContrasena($event)"
-      (goToLogin)="cambiarEstado('login')">
+    <app-new-password-form *ngIf="currentState === 'new-password'"
+      (passwordSubmit)="changeState('login')"
+      (goToLogin)="changeState('login')">
     </app-new-password-form>
 
   </div>

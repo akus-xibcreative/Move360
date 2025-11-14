@@ -10,10 +10,10 @@
   border-radius: 12px;
   width: 100%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e0e0e0; 
+  border: 1px solid #e0e0e0;
 }
 
-.bienvenida-title {
+.welcome-title {
   font-size: 1.6rem;
   font-weight: 700;
   color: #000000 !important;
@@ -48,7 +48,8 @@ ion-item {
 
 ion-item .label-floating.sc-ion-label-md-h,
 ion-item .label-floating.sc-ion-label-ios-h {
-  color: #666 !important; /* Color gris */
+  color: #111 !important;
+  opacity: 1 !important;
 }
 
 .login-button {
@@ -79,3 +80,5 @@ ion-item .label-floating.sc-ion-label-ios-h {
   text-align: left;
   padding-left: 5px;
 }
+
+
