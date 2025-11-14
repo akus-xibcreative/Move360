@@ -1,8 +1,13 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Home
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" color="danger">
+        Cerrar Sesión
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -14,7 +19,8 @@
   </ion-header>
 
   <div id="container">
-    <strong>aaaaaaaaaaaaaaa</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <strong>¡Bienvenido!</strong>
+    <p *ngIf="userEmail">Usuario: {{ userEmail }}</p>
+    <p>Has iniciado sesión correctamente.</p>
   </div>
 </ion-content>
