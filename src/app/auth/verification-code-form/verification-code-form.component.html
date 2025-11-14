@@ -1,22 +1,34 @@
 <div class="form-card">
-  <h1 class="ion-text-center bienvenida-title">Verificación de Código</h1>
+  <!-- Título alineado a la izquierda -->
+  <h1 class="bienvenida-title">Verificación de Código</h1>
 
-  <p class="ion-text-center description-text">
+  <!-- Descripción alineada a la izquierda -->
+  <p class="description-text">
     Hemos enviado un código de 6 dígitos a tu correo. Por favor, ingrésalo a continuación para continuar.
   </p>
 
   <form [formGroup]="codeForm" (ngSubmit)="onSubmit()">
-    <ion-item class="ion-margin-vertical custom-input" fill="outline">
+    <!-- Se quita ion-margin-vertical y se deja fill="outline" -->
+    <ion-item class="custom-input" fill="outline">
       <ion-label position="floating">Código de Verificación (6 dígitos)</ion-label>
-      <ion-input type="number" formControlName="code"></ion-input>
-      <ion-icon slot="start" name="key-outline"></ion-icon>
+      <ion-input
+        type="text"
+        inputmode="numeric"
+        maxlength="6"
+        pattern="[0-9]*"
+        autocomplete="one-time-code"
+        formControlName="code">
+      </ion-input>
+      <!-- Se quita <ion-icon slot="start" name="key-outline"></ion-icon> para mantener la consistencia -->
     </ion-item>
+
     <div *ngIf="codeForm.get('code')?.invalid && codeForm.get('code')?.touched" class="error-message">
       <span *ngIf="codeForm.get('code')?.errors?.['required']">El código es obligatorio.</span>
       <span *ngIf="codeForm.get('code')?.errors?.['minlength'] || codeForm.get('code')?.errors?.['maxlength']">Debe ser de 6 dígitos.</span>
     </div>
 
-    <p class="ion-text-end back-to-login" (click)="goToLogin.emit()">
+    <!-- Se quita ion-text-end y se añade clase back-to-login -->
+    <p class="back-to-login" (click)="goToLogin.emit()">
       Volver a Iniciar Sesión
     </p>
 
@@ -29,7 +41,5 @@
     </ion-button>
 
   </form>
-  <p class="copyright-text ion-text-center ion-padding-top">
-    Todos los derechos reservados a Jidokwan Jaguares Taekwondo®
-  </p>
+
 </div>

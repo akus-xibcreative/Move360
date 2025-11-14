@@ -4,27 +4,22 @@
 
   <form (ngSubmit)="onSubmit()">
     <ion-item class="custom-item" lines="none">
-      <ion-icon slot="start" name="mail-outline"></ion-icon>
-      <ion-input placeholder="Correo Electrónico"
-                 type="email"
-                 required
-                 [(ngModel)]="email"
-                 name="email">
+      <ion-label position="floating">Correo Electrónico</ion-label>
+      <ion-input type="email"
+                required
+                [(ngModel)]="email"
+                name="email">
       </ion-input>
     </ion-item>
 
     <ion-item class="custom-item" lines="none">
-      <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
-      <ion-input placeholder="Contraseña"
-                 [type]="passwordType"
-                 required
-                 [(ngModel)]="password"
-                 name="password">
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input type="password"
+                required
+                [(ngModel)]="password"
+                name="password">
+        <ion-input-password-toggle slot="end"></ion-input-password-toggle>
       </ion-input>
-
-      <ion-button slot="end" fill="clear" color="dark" (click)="togglePasswordVisibility()">
-        <ion-icon [name]="passwordVisible ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-      </ion-button>
     </ion-item>
 
     <div class="forgot-password-container">
@@ -42,4 +37,3 @@
 </div>
 
 
-<p class="copyright-text">Todos los derechos reservados a Move360®</p>

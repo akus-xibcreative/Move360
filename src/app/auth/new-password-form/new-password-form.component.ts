@@ -20,12 +20,14 @@ export function passwordsMatchValidator(control: AbstractControl): ValidationErr
 @Component({
   selector: 'app-new-password-form',
   templateUrl: './new-password-form.component.html',
-  styleUrls: ['../auth-flow/auth-flow.component.scss'], // Reutiliza estilos globales
+  styleUrls: ['./new-password-form.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, ReactiveFormsModule]
 })
 export class NewPasswordFormComponent implements OnInit {
   passwordForm!: FormGroup;
+  // Control de visibilidad de la nueva contraseña
+  passwordVisible: boolean = false;
 
   // Emite la nueva contraseña al padre
   @Output() passwordSubmit = new EventEmitter<any>();
@@ -43,6 +45,10 @@ export class NewPasswordFormComponent implements OnInit {
       // Aplica el validador a nivel de FormGroup
       validators: passwordsMatchValidator
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.passwordVisible = !this.passwordVisible;
   }
 
   get passwordControls() {

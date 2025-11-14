@@ -18,34 +18,47 @@
 }
 
 .custom-item {
-    --padding-start: 0;
-    --inner-padding-end: 0;
-    --padding-end: 0;
+    --padding-start: 15px;
+    --inner-padding-end: 15px;
+    --padding-end: 15px;
     border: 1.5px solid #000;
     border-radius: 8px;
     margin-bottom: 20px;
-    --background: #fff;
-    ion-icon {
-        color: #000;
-        font-size: 1.5rem;
-        margin-right: 10px;
-        margin-left: 10px;
+    --background: #ffffff;
+
+    ion-label {
+        color: #000000;
+        font-size: 1rem;
     }
 
     ion-input {
         --color: #000000;
-        --placeholder-color: #000000;
+        --placeholder-color: #999999;
         --placeholder-opacity: 1;
-        padding-left: 0 !important;
     }
 }
 
-ion-button[slot="end"] {
-    margin-right: 5px;
+/* 1. ESTILOS DEL TOGGLE (Ojo) - Color Negro Forzado */
+ion-input-password-toggle {
+  /* Forzamos el color del icono principal a negro */
+  --color: #000000 !important;
+  opacity: 1 !important;
+  font-size: 1.2rem !important;
 
-    ion-icon {
-        color: #000000 !important;
-    }
+  /* Aseguramos que el color del icono sea negro */
+  &::part(icon) {
+      color: #000000 !important;
+      fill: #000000 !important;
+      opacity: 1 !important;
+      font-size: 1.2rem !important;
+  }
+}
+
+
+/* Se mantiene la regla de visibilidad por si quieres activarla después, aunque no sea obligatoria */
+.custom-item ion-input[placeholder-shown] ion-input-password-toggle {
+  /* Si el campo está vacío, se oculta (o si lo prefieres visible, elimina esta regla) */
+  --display: none;
 }
 
 
@@ -80,12 +93,4 @@ ion-button[slot="end"] {
     &:hover {
         --background: #333333;
     }
-}
-
-
-.copyright-text {
-    text-align: center;
-    font-size: 0.75rem;
-    color: #000000;
-    margin-top: 30px;
 }

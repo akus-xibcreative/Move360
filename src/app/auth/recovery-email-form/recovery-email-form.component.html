@@ -9,9 +9,8 @@
   </p>
 
   <form (ngSubmit)="onSubmit()">
-    <!-- Aplicamos clase custom-item para el estilo de borde/color -->
-    <ion-item lines="none" class="custom-item">
-      <ion-icon slot="start" name="mail-outline" color="medium"></ion-icon>
+    <!-- Aplicamos clase custom-input para el estilo de borde/color -->
+    <ion-item class="custom-input" fill="outline">
       <!-- Usamos placeholder en lugar de label/labelPlacement -->
       <ion-input
         placeholder="Correo Electrónico"
@@ -41,4 +40,3 @@
 
 </div>
 
-<p class="copyright-text">Todos los derechos reservados a Move360®</p>

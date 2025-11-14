@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-verification-code-form',
   templateUrl: './verification-code-form.component.html',
-  styleUrls: ['../auth-flow/auth-flow.component.scss'],
+  styleUrls: ['./verification-code-form.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, ReactiveFormsModule]
 })
