@@ -1,0 +1,80 @@
+// Reutilizamos la mayoría de los estilos de AltaUsuarioPage para consistencia
+$button-color: #84B6F4;
+$card-shadow-color: rgba(0, 0, 0, 0.05);
+
+ion-content {
+    --background: transparent;
+}
+
+.alta-grupo-container {
+    padding: 0;
+}
+
+// --- Header y Acciones ---
+.header-actions {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px;
+
+    .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a202c;
+        margin: 0 0 15px 0;
+    }
+
+    .actions-row {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+
+        .custom-search-bar {
+            --background: #fff;
+            --box-shadow: none;
+            --border-radius: 12px;
+            --placeholder-color: #999;
+            flex-grow: 1;
+            padding: 0;
+            margin: 0;
+        }
+
+        .custom-button {
+            --background: #{$button-color};
+            --border-radius: 12px;
+            --padding-start: 20px;
+            --padding-end: 20px;
+            text-transform: none;
+            font-weight: 600;
+        }
+    }
+}
+
+// --- Contenedor Principal (Card) ---
+.data-card {
+    --background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px #{$card-shadow-color};
+    margin: 0;
+    padding: 20px;
+
+    .data-content-area {
+        padding: 0;
+    }
+
+    // Estilo básico para los placeholders
+    .table-container, .form-container {
+        padding: 20px;
+        border: 1px dashed #ddd;
+        border-radius: 8px;
+
+        p { margin: 5px 0; }
+        strong { color: #4D82BC; }
+    }
+}
+// Estilos del skeleton para que se vea bien
+.skeleton-grid {
+    margin-top: 20px;
+    ion-col {
+        padding: 5px 10px;
+    }
+}

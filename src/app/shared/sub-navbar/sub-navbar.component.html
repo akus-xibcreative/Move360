@@ -1,0 +1,10 @@
+<nav class="sub-navbar-container">
+  <a
+    *ngFor="let item of menuItems"
+    [routerLink]="item.url"
+    routerLinkActive="active"
+    class="sub-menu-item"
+  >
+    {{ item.title }}
+  </a>
+</nav>

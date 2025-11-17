@@ -1,0 +1,17 @@
+<ion-content class="navbar-container">
+  <div class="logo-area">
+    <img src="assets/icon/jaguares-taekwondo.png" alt="Logo Jaguares Taekwondo" class="logo-image" />
+  </div>
+
+  <ion-list lines="none" class="menu-list">
+    <ion-item
+      *ngFor="let item of menuItems"
+      [routerLink]="item.url"
+      routerLinkActive="active"
+      class="menu-item"
+    >
+
+      <ion-label>{{ item.title }}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

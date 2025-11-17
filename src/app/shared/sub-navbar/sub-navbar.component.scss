@@ -1,0 +1,26 @@
+.sub-navbar-container {
+  display: flex;
+  gap: 25px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.sub-menu-item {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  padding-bottom: 10px;
+  cursor: pointer;
+  transition: color 0.2s, border-bottom-color 0.2s;
+
+  &.active {
+    color: #4D82BC;
+    border-bottom: 3px solid #4D82BC;
+    font-weight: 600;
+  }
+
+  &:hover:not(.active) {
+    color: #84B6F4; 
+  }
+}

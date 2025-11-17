@@ -1,0 +1,64 @@
+<div class="alta-categoria-usuario-container">
+    <div class="header-actions">
+      <ion-text color="dark">
+        <h2 class="page-title">Alta de Categoría de Usuario</h2>
+      </ion-text>
+
+      <div class="actions-row">
+        <ion-searchbar
+          placeholder="Buscar por nombre de Categoría"
+          debounce="500"
+          class="custom-search-bar"
+        ></ion-searchbar>
+        <ion-button
+          (click)="cambiarAEstadoVer()"
+          fill="solid"
+          class="custom-button btn-view"
+          [disabled]="uiState === 'ver'"
+        >
+          <ion-icon name="eye-outline" slot="start"></ion-icon>
+          Ver
+        </ion-button>
+
+        <ion-button
+          (click)="cambiarAEstadoNuevo()"
+          fill="solid"
+          class="custom-button btn-new"
+          [disabled]="uiState === 'nuevo'"
+        >
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Nuevo
+        </ion-button>
+      </div>
+    </div>
+    <ion-card class="data-card">
+      <ion-card-content class="data-content-area">
+        <div *ngIf="uiState === 'ver'" class="table-container">
+          <ion-text color="medium">
+            <p><strong>[Placeholder: Ver Categorías]</strong></p>
+            <p>Aquí se mostrará la tabla de categorías de usuario (A, B, C) y sus permisos asociados.</p>
+          </ion-text>
+          <ion-grid fixed class="table-data-grid skeleton-grid">
+            <ion-row *ngFor="let i of [1, 2, 3]" class="skeleton-row">
+                <ion-col size="3"><ion-skeleton-text animated style="width: 90%"></ion-skeleton-text></ion-col>
+                <ion-col size="5"><ion-skeleton-text animated style="width: 80%"></ion-skeleton-text></ion-col>
+                <ion-col size="4"><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+
+        <div *ngIf="uiState === 'nuevo'" class="form-container">
+          <ion-text color="primary">
+            <p><strong>[Placeholder: Formulario Nueva Categoría]</strong></p>
+            <p>Aquí se diseñará el formulario para dar de alta una nueva categoría y sus permisos.</p>
+          </ion-text>
+          <!-- Mock de formulario -->
+          <ion-skeleton-text animated style="width: 100%; height: 40px; margin-bottom: 10px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 100%; height: 40px; margin-bottom: 10px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 150px; height: 40px; margin-top: 20px;"></ion-skeleton-text>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+</div>

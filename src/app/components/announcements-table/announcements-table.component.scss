@@ -1,0 +1,99 @@
+// Variables locales
+$card-bg: #fff;
+$accent-color: #4D82BC; // Color primario de acento
+$text-dark: #1a202c;
+$text-medium: #4a5568;
+$shadow-color: rgba(0, 0, 0, 0.05);
+$header-bg: #f0f4f7;
+
+.table-card {
+    background-color: $card-bg;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px $shadow-color;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: $text-dark;
+        margin: 0 0 15px 0;
+    }
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto; // Permite el scroll horizontal si es necesario
+}
+
+.announcements-grid {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    // Aseguramos un ancho mínimo para una mejor visualización en desktop
+    min-width: 800px;
+}
+
+// --- Estilos de Filas y Celdas ---
+
+.header-row {
+    background-color: $header-bg;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 5px; // Espacio visual para separar del cuerpo
+
+    .header-cell {
+        font-weight: 600;
+        color: $text-medium;
+        padding: 10px 15px;
+        text-transform: uppercase;
+        font-size: 12px;
+        border-right: 1px solid #e9ecef; // Separador de columnas sutil
+
+        &:last-child {
+            border-right: none;
+        }
+    }
+}
+
+.data-row {
+    // Fondo claro para las filas de datos
+    --ion-grid-columns: 12; // Aseguramos el conteo de columnas
+    transition: background-color 0.15s;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:hover {
+        background-color: #f7f9fc; // Highlight sutil al pasar el mouse
+    }
+
+    .data-cell {
+        padding: 10px 15px;
+        font-size: 14px;
+        color: $text-dark;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.detail-cell {
+            white-space: normal; // Permitir que el detalle fluya en varias líneas
+            line-height: 1.4;
+        }
+    }
+
+    .action-button {
+        --padding-start: 0;
+        --padding-end: 0;
+        --color: $accent-color;
+        font-weight: 600;
+        text-transform: none;
+        font-size: 14px;
+    }
+}
+
+.empty-row {
+    border-bottom: none;
+    .empty-cell {
+        min-height: 80px; // Espacio mínimo para que la card no se colapse si la tabla está vacía
+    }
+}

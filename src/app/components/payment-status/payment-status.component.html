@@ -1,0 +1,31 @@
+<div class="status-card">
+  <!-- Card Header -->
+  <div class="card-header">
+    <h2 class="card-title">Estatus de Pago</h2>
+  </div>
+
+  <!-- Card Body: Chart and Legend -->
+  <div class="card-body">
+
+    <!-- 1. Leyenda (Ahora a la izquierda) -->
+    <div class="legend">
+      <div class="legend-item">
+        <span class="indicator paid-color"></span>
+        <span class="label">Pagado</span>
+      </div>
+      <div class="legend-item">
+        <span class="indicator pending-color"></span>
+        <span class="label">Pendiente</span>
+      </div>
+    </div>
+
+    <!-- 2. Chart Container (Ahora a la derecha) -->
+    <div class="chart-container">
+      <!--
+        El estilo de la gráfica circular (pie chart) se define en el SCSS
+        usando conic-gradient para simular 75% Pagado (verde) y 25% Pendiente (rojo).
+      -->
+      <div class="pie-chart"></div>
+    </div>
+  </div>
+</div>

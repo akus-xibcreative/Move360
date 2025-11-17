@@ -1,0 +1,244 @@
+<div class="alta-usuario-container">
+
+  <!-- TÍTULO Y ACCIONES PRINCIPALES -->
+  <div class="header-actions">
+    <ion-text color="dark">
+      <h2 class="page-title">Alta de Usuario</h2>
+    </ion-text>
+
+    <div class="actions-row">
+      <!-- Buscador con debounce visual mock -->
+      <ion-searchbar
+        (ionInput)="onSearchChange($event)"
+        placeholder="Buscar por Nombre, Apellido, o Correo"
+        debounce="500"
+        class="custom-search-bar"
+      ></ion-searchbar>
+
+      <!-- Botones "Ver" y "Nuevo" (Sin iconos) -->
+      <ion-button
+        (click)="cambiarAEstadoVer()"
+        fill="solid"
+        class="custom-button btn-view"
+        [disabled]="uiState === 'ver'"
+      >
+        Ver
+      </ion-button>
+
+      <ion-button
+        (click)="cambiarAEstadoNuevo()"
+        fill="solid"
+        class="custom-button btn-new"
+        [disabled]="uiState === 'nuevo'"
+      >
+        Nuevo
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR PRINCIPAL DE DATOS (TARJETA) -->
+  <ion-card class="data-card">
+    <ion-card-content class="data-content-area">
+
+      <!-- Encabezados de la tabla (Siempre visibles cuando se muestra una tabla) -->
+      <div *ngIf="uiState === 'ver' || uiState === 'nuevo' || uiState === 'skeleton'" class="table-container">
+        <ion-grid fixed class="table-header-grid">
+          <ion-row>
+            <!-- COLUMNAS CON LOS TAMAÑOS DEFINIDOS: 0.5 + 1.25 + 1.25 + 1.5 + 2.5 + 1 + 1 + 2 + 1 = 12 -->
+            <ion-col size="0.5" class="header-cell">Id</ion-col>
+            <ion-col size="1.25" class="header-cell">Nombre</ion-col>
+            <ion-col size="1.25" class="header-cell">Apellidos</ion-col>
+            <ion-col size="1.5" class="header-cell">Contraseña</ion-col>
+            <ion-col size="2.5" class="header-cell">Correo</ion-col>
+            <ion-col size="1" class="header-cell">Grado</ion-col>
+            <ion-col size="1" class="header-cell">Grupo</ion-col>
+            <ion-col size="2" class="header-cell">Categoría</ion-col>
+            <ion-col size="1" class="header-cell">Celular</ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <!-- 1. ESTADO: Nuevo Usuario (FILA EDITABLE ALINEADA) -->
+      <div *ngIf="uiState === 'nuevo'" class="new-user-aligned-content">
+        <!-- Fila Editable que imita la Fila de Datos -->
+        <ion-grid fixed class="table-data-grid editable-row-grid">
+          <ion-row class="data-row editable-data-row">
+            <!-- ID (Input deshabilitado para consistencia) -->
+            <ion-col size="0.5" class="data-cell">
+              <ion-input [(ngModel)]="newUser.id" disabled value="--"></ion-input>
+            </ion-col>
+            <!-- Nombre -->
+            <ion-col size="1.25" class="data-cell">
+              <ion-input [(ngModel)]="newUser.nombre" placeholder="Nombre"></ion-input>
+            </ion-col>
+            <!-- Apellidos -->
+            <ion-col size="1.25" class="data-cell">
+              <ion-input [(ngModel)]="newUser.apellidos" placeholder="Apellidos"></ion-input>
+            </ion-col>
+            <!-- Contraseña -->
+            <ion-col size="1.5" class="data-cell">
+              <ion-input [(ngModel)]="newUser.contrasena" type="password" placeholder="Contraseña"></ion-input>
+            </ion-col>
+            <!-- Correo -->
+            <ion-col size="2.5" class="data-cell">
+              <ion-input [(ngModel)]="newUser.correo" type="email" placeholder="Correo"></ion-input>
+            </ion-col>
+
+            <!-- Grado (Botón que abre Modal) -->
+            <ion-col size="1" class="data-cell action-cell">
+              <ion-button (click)="openModal('grado')" fill="clear" size="small" class="action-button-select">
+                {{ newUser.grado || 'Grado' }}
+              </ion-button>
+            </ion-col>
+            <!-- Grupo (Botón que abre Modal) -->
+            <ion-col size="1" class="data-cell action-cell">
+              <ion-button (click)="openModal('grupo')" fill="clear" size="small" class="action-button-select">
+                {{ newUser.grupo || 'Grupo' }}
+              </ion-button>
+            </ion-col>
+            <!-- Categoría (Botón que abre Modal) -->
+            <ion-col size="2" class="data-cell action-cell">
+              <ion-button (click)="openModal('categoria')" fill="clear" size="small" class="action-button-select">
+                {{ newUser.categoria || 'Categoría' }}
+              </ion-button>
+            </ion-col>
+            <!-- Celular -->
+            <ion-col size="1" class="data-cell">
+              <ion-input [(ngModel)]="newUser.celular" placeholder="Celular"></ion-input>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <!-- Botones de Acción de Fila Editable (Alineados a la derecha bajo la tabla) -->
+        <div class="form-actions-aligned">
+          <ion-button (click)="cancelarEdicion()" fill="clear" color="medium">
+            Cancelar
+          </ion-button>
+          <ion-button (click)="confirmarEdicion()" fill="solid" class="custom-button">
+            Confirmar
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- 2. ESTADO: Ver Tabla de Usuarios (SOLO MUESTRA LAS FILAS DE DATOS) -->
+      <div *ngIf="uiState === 'ver'" class="table-container">
+        <!-- Filas de datos mock -->
+        <ion-grid fixed class="table-data-grid">
+          <ion-row *ngFor="let user of mockUsers" class="data-row">
+            <ion-col size="0.5" class="data-cell">{{ user.id }}</ion-col>
+            <ion-col size="1.25" class="data-cell">{{ user.nombre }}</ion-col>
+            <ion-col size="1.25" class="data-cell">{{ user.apellidos }}</ion-col>
+            <ion-col size="1.5" class="data-cell">{{ user.contrasena }}</ion-col>
+            <ion-col size="2.5" class="data-cell">{{ user.correo }}</ion-col>
+            <ion-col size="1" class="data-cell">{{ user.grado }}</ion-col>
+            <ion-col size="1" class="data-cell">{{ user.grupo }}</ion-col>
+            <ion-col size="2" class="data-cell">{{ user.categoria }}</ion-col>
+            <ion-col size="1" class="data-cell">{{ user.celular }}</ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <!-- 3. ESTADO: Skeleton (Carga Visual) -->
+      <div *ngIf="uiState === 'skeleton'" class="table-container">
+        <ion-grid fixed class="table-data-grid skeleton-grid">
+          <ion-row *ngFor="let i of [1, 2, 3, 4, 5]" class="skeleton-row">
+            <ion-col size="0.5"><ion-skeleton-text animated style="width: 80%"></ion-skeleton-text></ion-col>
+            <ion-col size="1.25"><ion-skeleton-text animated style="width: 90%"></ion-skeleton-text></ion-col>
+            <ion-col size="1.25"><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></ion-col>
+            <ion-col size="1.5"><ion-skeleton-text animated style="width: 50%"></ion-skeleton-text></ion-col>
+            <ion-col size="2.5"><ion-skeleton-text animated style="width: 95%"></ion-skeleton-text></ion-col>
+            <ion-col size="1"><ion-skeleton-text animated style="width: 40%"></ion-skeleton-text></ion-col>
+            <ion-col size="1"><ion-skeleton-text animated style="width: 60%"></ion-skeleton-text></ion-col>
+            <ion-col size="2"><ion-skeleton-text animated style="width: 40%"></ion-skeleton-text></ion-col>
+            <ion-col size="1"><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <!-- 4. ESTADO: Empty (Sin Resultados) -->
+      <div *ngIf="uiState === 'empty'" class="empty-state">
+        <ion-text color="medium">
+          <ion-icon name="search-outline" size="large"></ion-icon>
+          <h3>Sin Resultados</h3>
+          <p>No se encontraron usuarios que coincidan con su búsqueda.</p>
+        </ion-text>
+      </div>
+
+      <!-- 5. ESTADO: Error -->
+      <div *ngIf="uiState === 'error'" class="error-state">
+        <ion-text color="danger">
+          <ion-icon name="close-circle-outline" size="large"></ion-icon>
+          <h3>Error de Conexión</h3>
+          <p>Ocurrió un problema al cargar los datos. Inténtelo de nuevo más tarde.</p>
+        </ion-text>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- MODALES Mock para selección de Grado, Grupo y Categoría (Se mantienen sin cambios) -->
+
+  <!-- Modal Grado -->
+  <ion-modal [isOpen]="isGradoModalOpen" (didDismiss)="closeModal('grado')">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>Seleccionar Grado</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeModal('grado')">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-list>
+          <ion-item *ngFor="let grado of mockGrados" button (click)="closeModal('grado', grado)">
+            <ion-label>{{ grado }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal Grupo -->
+  <ion-modal [isOpen]="isGrupoModalOpen" (didDismiss)="closeModal('grupo')">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>Seleccionar Grupo</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeModal('grupo')">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-list>
+          <ion-item *ngFor="let grupo of mockGrupos" button (click)="closeModal('grupo', grupo)">
+            <ion-label>{{ grupo }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal Categoría -->
+  <ion-modal [isOpen]="isCategoriaModalOpen" (didDismiss)="closeModal('categoria')">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>Seleccionar Categoría</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeModal('categoria')">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-list>
+          <ion-item *ngFor="let categoria of mockCategorias" button (click)="closeModal('categoria', categoria)">
+            <ion-label>{{ categoria }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+</div>
