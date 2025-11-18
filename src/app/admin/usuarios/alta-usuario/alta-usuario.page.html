@@ -17,7 +17,7 @@
 
       <!-- Botones "Ver" y "Nuevo" (Sin iconos) -->
       <ion-button
-        (click)="cambiarAEstadoVer()"
+        (click)="changeToViewState()"
         fill="solid"
         class="custom-button btn-view"
         [disabled]="uiState === 'ver'"
@@ -26,7 +26,7 @@
       </ion-button>
 
       <ion-button
-        (click)="cambiarAEstadoNuevo()"
+        (click)="changeToNewState()"
         fill="solid"
         class="custom-button btn-new"
         [disabled]="uiState === 'nuevo'"
@@ -65,56 +65,56 @@
           <ion-row class="data-row editable-data-row">
             <!-- ID (Input deshabilitado para consistencia) -->
             <ion-col size="0.5" class="data-cell">
-              <ion-input [(ngModel)]="newUser.id" disabled value="--"></ion-input>
+              <ion-input disabled value="--"></ion-input>
             </ion-col>
             <!-- Nombre -->
             <ion-col size="1.25" class="data-cell">
-              <ion-input [(ngModel)]="newUser.nombre" placeholder="Nombre"></ion-input>
+              <ion-input [(ngModel)]="newUser.firstName" placeholder="Nombre"></ion-input>
             </ion-col>
             <!-- Apellidos -->
             <ion-col size="1.25" class="data-cell">
-              <ion-input [(ngModel)]="newUser.apellidos" placeholder="Apellidos"></ion-input>
+              <ion-input [(ngModel)]="newUser.lastName" placeholder="Apellidos"></ion-input>
             </ion-col>
             <!-- Contraseña -->
             <ion-col size="1.5" class="data-cell">
-              <ion-input [(ngModel)]="newUser.contrasena" type="password" placeholder="Contraseña"></ion-input>
+              <ion-input [(ngModel)]="newUser.password" type="password" placeholder="Contraseña"></ion-input>
             </ion-col>
             <!-- Correo -->
             <ion-col size="2.5" class="data-cell">
-              <ion-input [(ngModel)]="newUser.correo" type="email" placeholder="Correo"></ion-input>
+              <ion-input [(ngModel)]="newUser.email" type="email" placeholder="Correo"></ion-input>
             </ion-col>
 
             <!-- Grado (Botón que abre Modal) -->
             <ion-col size="1" class="data-cell action-cell">
-              <ion-button (click)="openModal('grado')" fill="clear" size="small" class="action-button-select">
-                {{ newUser.grado || 'Grado' }}
+              <ion-button (click)="openModal('grade')" fill="clear" size="small" class="action-button-select">
+                {{ newUser.grade_id || 'Grado' }}
               </ion-button>
             </ion-col>
             <!-- Grupo (Botón que abre Modal) -->
             <ion-col size="1" class="data-cell action-cell">
-              <ion-button (click)="openModal('grupo')" fill="clear" size="small" class="action-button-select">
-                {{ newUser.grupo || 'Grupo' }}
+              <ion-button (click)="openModal('group')" fill="clear" size="small" class="action-button-select">
+                {{ newUser.group_id || 'Grupo' }}
               </ion-button>
             </ion-col>
             <!-- Categoría (Botón que abre Modal) -->
             <ion-col size="2" class="data-cell action-cell">
-              <ion-button (click)="openModal('categoria')" fill="clear" size="small" class="action-button-select">
-                {{ newUser.categoria || 'Categoría' }}
+              <ion-button (click)="openModal('category')" fill="clear" size="small" class="action-button-select">
+                {{ newUser.category_id || 'Categoría' }}
               </ion-button>
             </ion-col>
             <!-- Celular -->
             <ion-col size="1" class="data-cell">
-              <ion-input [(ngModel)]="newUser.celular" placeholder="Celular"></ion-input>
+              <ion-input [(ngModel)]="newUser.phone" placeholder="Celular"></ion-input>
             </ion-col>
           </ion-row>
         </ion-grid>
 
         <!-- Botones de Acción de Fila Editable (Alineados a la derecha bajo la tabla) -->
         <div class="form-actions-aligned">
-          <ion-button (click)="cancelarEdicion()" fill="clear" color="medium">
+          <ion-button (click)="cancelEdit()" fill="clear" color="medium">
             Cancelar
           </ion-button>
-          <ion-button (click)="confirmarEdicion()" fill="solid" class="custom-button">
+          <ion-button (click)="confirmEdit()" fill="solid" class="custom-button">
             Confirmar
           </ion-button>
         </div>
@@ -126,14 +126,14 @@
         <ion-grid fixed class="table-data-grid">
           <ion-row *ngFor="let user of mockUsers" class="data-row">
             <ion-col size="0.5" class="data-cell">{{ user.id }}</ion-col>
-            <ion-col size="1.25" class="data-cell">{{ user.nombre }}</ion-col>
-            <ion-col size="1.25" class="data-cell">{{ user.apellidos }}</ion-col>
-            <ion-col size="1.5" class="data-cell">{{ user.contrasena }}</ion-col>
-            <ion-col size="2.5" class="data-cell">{{ user.correo }}</ion-col>
-            <ion-col size="1" class="data-cell">{{ user.grado }}</ion-col>
-            <ion-col size="1" class="data-cell">{{ user.grupo }}</ion-col>
-            <ion-col size="2" class="data-cell">{{ user.categoria }}</ion-col>
-            <ion-col size="1" class="data-cell">{{ user.celular }}</ion-col>
+            <ion-col size="1.25" class="data-cell">{{ user.firstName }}</ion-col>
+            <ion-col size="1.25" class="data-cell">{{ user.lastName }}</ion-col>
+            <ion-col size="1.5" class="data-cell">*******</ion-col>
+            <ion-col size="2.5" class="data-cell">{{ user.email }}</ion-col>
+            <ion-col size="1" class="data-cell">{{ getGradeDescription(user.grade_id) }}</ion-col>
+            <ion-col size="1" class="data-cell">{{ getGroupDescription(user.group_id) }}</ion-col>
+            <ion-col size="2" class="data-cell">{{ getCategoryDescription(user.category_id) }}</ion-col>
+            <ion-col size="1" class="data-cell">{{ user.phone }}</ion-col>
           </ion-row>
         </ion-grid>
       </div>
@@ -179,20 +179,20 @@
   <!-- MODALES Mock para selección de Grado, Grupo y Categoría (Se mantienen sin cambios) -->
 
   <!-- Modal Grado -->
-  <ion-modal [isOpen]="isGradoModalOpen" (didDismiss)="closeModal('grado')">
+  <ion-modal [isOpen]="isGradeModalOpen" (didDismiss)="closeModal('grade')">
     <ng-template>
       <ion-header>
         <ion-toolbar color="primary">
           <ion-title>Seleccionar Grado</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="closeModal('grado')">Cerrar</ion-button>
+            <ion-button (click)="closeModal('grade')">Cerrar</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content>
         <ion-list>
-          <ion-item *ngFor="let grado of mockGrados" button (click)="closeModal('grado', grado)">
-            <ion-label>{{ grado }}</ion-label>
+          <ion-item *ngFor="let grade of mockGrades" button (click)="selectGrade(grade)">
+            <ion-label>{{ grade.desc }}</ion-label>
           </ion-item>
         </ion-list>
       </ion-content>
@@ -200,20 +200,20 @@
   </ion-modal>
 
   <!-- Modal Grupo -->
-  <ion-modal [isOpen]="isGrupoModalOpen" (didDismiss)="closeModal('grupo')">
+  <ion-modal [isOpen]="isGroupModalOpen" (didDismiss)="closeModal('group')">
     <ng-template>
       <ion-header>
         <ion-toolbar color="primary">
           <ion-title>Seleccionar Grupo</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="closeModal('grupo')">Cerrar</ion-button>
+            <ion-button (click)="closeModal('group')">Cerrar</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content>
         <ion-list>
-          <ion-item *ngFor="let grupo of mockGrupos" button (click)="closeModal('grupo', grupo)">
-            <ion-label>{{ grupo }}</ion-label>
+          <ion-item *ngFor="let group of mockGroups" button (click)="selectGroup(group)">
+            <ion-label>{{ group.desc }}</ion-label>
           </ion-item>
         </ion-list>
       </ion-content>
@@ -221,20 +221,20 @@
   </ion-modal>
 
   <!-- Modal Categoría -->
-  <ion-modal [isOpen]="isCategoriaModalOpen" (didDismiss)="closeModal('categoria')">
+  <ion-modal [isOpen]="isCategoryModalOpen" (didDismiss)="closeModal('category')">
     <ng-template>
       <ion-header>
         <ion-toolbar color="primary">
           <ion-title>Seleccionar Categoría</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="closeModal('categoria')">Cerrar</ion-button>
+            <ion-button (click)="closeModal('category')">Cerrar</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content>
         <ion-list>
-          <ion-item *ngFor="let categoria of mockCategorias" button (click)="closeModal('categoria', categoria)">
-            <ion-label>{{ categoria }}</ion-label>
+          <ion-item *ngFor="let category of mockCategories" button (click)="selectCategory(category)">
+            <ion-label>{{ category.desc }}</ion-label>
           </ion-item>
         </ion-list>
       </ion-content>

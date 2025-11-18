@@ -15,11 +15,6 @@ export const routes: Routes = [
     canActivate: [publicGuard]
   },
   {
-    path: 'home',
-    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
-    canActivate: [authGuard]
-  },
-  {
     path: 'admin',
     component: AdminPage,
     canActivate: [authGuard],

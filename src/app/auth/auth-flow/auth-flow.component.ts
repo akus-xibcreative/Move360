@@ -60,7 +60,7 @@ export class AuthFlowComponent implements OnInit {
       });
       await toast.present();
 
-      this.router.navigate(['/home']);
+      this.router.navigate(['/admin']);
     } catch (error: any) {
       await loading.dismiss();
       console.error('Error de autenticación:', error);

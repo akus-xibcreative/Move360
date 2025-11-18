@@ -11,7 +11,7 @@ export const publicGuard = () => {
     take(1),
     map(user => {
       if (user) {
-        router.navigate(['/home']);
+        router.navigate(['/admin']);
         return false;
       } else {
         return true;

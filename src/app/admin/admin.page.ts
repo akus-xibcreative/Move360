@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, IonText } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from '../shared/navbar/navbar.component';
+import { AuthenticationService } from '../firebase/authentication.service';
+import { FirestoreService } from '../firebase/firestore.service';
 
 @Component({
   selector: 'app-admin',
@@ -18,11 +20,24 @@ import { NavbarComponent } from '../shared/navbar/navbar.component';
 })
 export class AdminPage implements OnInit {
 
-  userName: string = 'Abner Ku';
+  userName: string = '';
 
-  constructor() { }
+  constructor(
+    private authService: AuthenticationService,
+    private firestoreService: FirestoreService
+  ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      const userData = await this.firestoreService.getUserData(user.uid);
+
+      if (userData) {
+        this.userName = `${userData['firstName']} ${userData['lastName']}`;
+      } else {
+        this.userName = user.email || 'Usuario';
+      }
+    }
   }
 
 }
