@@ -1,34 +1,34 @@
-// Reutilizamos la mayoría de los estilos de AltaUsuarioPage para consistencia
 $button-color: #84B6F4;
 $card-shadow-color: rgba(0, 0, 0, 0.05);
+$text-dark: #1a202c;
+$text-medium: #4a5568;
 
 ion-content {
-    --background: transparent;
+  --background: transparent;
 }
 
 .alta-grado-container {
-    padding: 0;
+  padding: 0;
 }
 
-// --- Header y Acciones ---
 .header-actions {
     display: flex;
     flex-direction: column;
     margin-bottom: 25px;
 
     .page-title {
-        font-size: 22px;
-        font-weight: 700;
-        color: #1a202c;
-        margin: 0 0 15px 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a202c;
+      margin: 0 0 15px 0;
     }
 
     .actions-row {
-        display: flex;
-        gap: 15px;
-        align-items: center;
+      display: flex;
+      gap: 15px;
+      align-items: center;
 
-        .custom-search-bar {
+            .custom-search-bar {
             --background: #fff;
             --box-shadow: none;
             --border-radius: 12px;
@@ -36,45 +36,169 @@ ion-content {
             flex-grow: 1;
             padding: 0;
             margin: 0;
-        }
+          }
 
-        .custom-button {
+          .custom-button {
             --background: #{$button-color};
             --border-radius: 12px;
             --padding-start: 20px;
             --padding-end: 20px;
             text-transform: none;
             font-weight: 600;
+          }
         }
-    }
 }
 
-// --- Contenedor Principal (Card) ---
 .data-card {
-    --background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px #{$card-shadow-color};
-    margin: 0;
-    padding: 20px;
+  --background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px #{$card-shadow-color};
+  margin: 0;
+  padding: 20px;
 
-    .data-content-area {
-        padding: 0;
-    }
+  .data-content-area {
+    padding: 0;
+  }
+}
 
-    // Estilo básico para los placeholders
-    .table-container, .form-container {
-        padding: 20px;
-        border: 1px dashed #ddd;
-        border-radius: 8px;
 
-        p { margin: 5px 0; }
-        strong { color: #4D82BC; }
+.table-header, .table-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 0.8fr;
+  align-items: center;
+  padding: 0;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.table-header {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e2e8f0;
+  font-weight: 700;
+  color: $text-dark;
+  border-radius: 8px 8px 0 0;
+}
+
+.header-cell {
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: $text-medium;
+}
+
+.data-cell {
+  padding: 12px 15px;
+  border-bottom: 1px solid #f0f4f7;
+  font-size: 15px;
+  color: $text-dark;
+  .table-row:last-of-type & {
+    border-bottom: none;
+  }
+}
+
+
+.seq-cell {
+  text-align: center;
+}
+
+
+.form-instruction {
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: $text-medium;
+}
+
+.input-row {
+  background-color: #fcfcfc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.input-cell {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border-bottom: none !important;
+}
+
+.cell-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 0;
+  font-size: 15px;
+  background-color: transparent;
+
+    &:focus {
+      border-color: $button-color;
     }
 }
-// Estilos del skeleton para que se vea bien
+
+.bottom-actions-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.cancel-button {
+    --background: transparent;
+    --border-color: #{$button-color};
+    --border-width: 2px;
+    --border-style: solid;
+    --color: #{$button-color};
+    --border-radius: 12px;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    text-transform: none;
+    font-weight: 600;
+}
+
+.confirm-button {
+    --background: #{$button-color};
+    --border-radius: 12px;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    text-transform: none;
+    font-weight: 600;
+}
+
+
 .skeleton-grid {
     margin-top: 20px;
     ion-col {
-        padding: 5px 10px;
+      padding: 5px 10px;
     }
+}
+
+.no-results{
+  padding: 20px 15px;
+  text-align: center;
+  border-top: 1px solid #f0f4f7;
+}
+
+.empty-state, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  text-align: center;
+
+  ion-icon {
+    font-size: 4rem;
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    font-weight: 600;
+    margin: 5px 0 10px 0;
+  }
+
+  p {
+    margin: 0;
+  }
 }

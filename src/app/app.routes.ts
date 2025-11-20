@@ -57,7 +57,10 @@ export const routes: Routes = [
           },
         ]
       },
-      { path: 'estudiante', loadComponent: () => import('./admin/placeholders/placeholder/placeholder.page').then(m => m.PlaceholderPage) },
+      { 
+        path: 'estudiante',
+        loadComponent: () => import('./admin/student/student.component').then(m => m.StudentComponent) 
+      },
       { path: 'profesor', loadComponent: () => import('./admin/placeholders/placeholder/placeholder.page').then(m => m.PlaceholderPage) },
       { path: 'tutor', loadComponent: () => import('./admin/placeholders/placeholder/placeholder.page').then(m => m.PlaceholderPage) },
       { path: 'comunicados', loadComponent: () => import('./admin/placeholders/placeholder/placeholder.page').then(m => m.PlaceholderPage) },

@@ -1,8 +1,7 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ToastController, LoadingController, AlertController } from '@ionic/angular';
-import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginFormComponent } from '../login-form/login-form.component';
 import { RecoveryEmailFormComponent } from '../recovery-email-form/recovery-email-form.component';
@@ -18,12 +17,11 @@ export type AuthState = 'login' | 'recover-email';
   imports: [
     IonicModule,
     CommonModule,
-    ReactiveFormsModule,
     LoginFormComponent,
     RecoveryEmailFormComponent
   ]
 })
-export class AuthFlowComponent implements OnInit {
+export class AuthFlowComponent {
   currentState: AuthState = 'login';
 
   constructor(
@@ -33,8 +31,6 @@ export class AuthFlowComponent implements OnInit {
     private loadingController: LoadingController,
     private alertController: AlertController
   ) { }
-
-  ngOnInit() { }
 
   changeState(nextState: AuthState) {
     this.currentState = nextState;

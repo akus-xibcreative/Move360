@@ -1,213 +1,216 @@
 // Colores de uso local (Obligatorios)
 $button-color: #84B6F4;
-$menu-active-color: #4D82BC; // Usado para el color primario de acento
+$menu-active-color: #4D82BC;
 $card-shadow-color: rgba(0, 0, 0, 0.05);
+$text-dark: #1a202c;
+$text-medium: #4a5568;
 
 ion-content {
-// Es crucial que esta página sea transparente para que se vea el fondo global del layout.
---background: transparent;
-padding: 0;
+  --background: transparent;
+  padding: 0;
 }
 
 .alta-usuario-container {
-padding: 0; // El padding ya viene del layout padre
+  padding: 0;
 }
 
-// --- Header y Acciones ---
 .header-actions {
-display: flex;
-flex-direction: column;
-margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 25px;
 
-.page-title {
-font-size: 22px;
-font-weight: 700;
-color: #1a202c;
-margin: 0 0 15px 0;
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0 0 15px 0;
+  }
+
+  .actions-row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+
+    .custom-search-bar {
+      --background: #fff;
+      --box-shadow: none;
+      --border-radius: 12px;
+      --placeholder-color: #999;
+      flex-grow: 1;
+      padding: 0;
+      margin: 0;
+    }
+
+    .custom-button {
+      --background: #{$button-color};
+      --border-radius: 12px;
+      --padding-start: 20px;
+      --padding-end: 20px;
+      text-transform: none;
+      font-weight: 600;
+    }
+  }
 }
 
-    .actions-row {
-        display: flex;
-        gap: 15px;
-        align-items: center;
-.custom-search-bar {
---background: #fff;
- --box-shadow: none;
---border-radius: 12px;
---placeholder-color: #999;
-            flex-grow: 1;
-            padding: 0;
-            margin: 0;
-        }
-.custom-button {
-// Botones: #84B6F4
- --background: #{$button-color};
- --border-radius: 12px;
- --padding-start: 20px;
- --padding-end: 20px;
-text-transform: none;
-font-weight: 600;
-}
-}
-}
-
-// --- Contenedor Principal (Card) ---
 .data-card {
---background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px #{$card-shadow-color};
-    margin: 0;
-    padding: 20px;
-.data-content-area {
-padding: 0;
+  --background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px #{$card-shadow-color};
+  margin: 0;
+  padding: 20px;
 
- // Estilos para los estados de mensaje (Empty, Error)
-.empty-state, .error-state {
-display: flex;
-flex-direction: column;
- align-items: center;
- justify-content: center;
- padding: 50px 0; text-align: center;
+  .data-content-area {
+    padding: 0;
+  }
+}
 
-ion-icon { font-size: 4rem; margin-bottom: 10px; }
- h3 { font-weight: 600; margin: 5px 0 10px 0; }
- p { margin: 0; }
- }
+.table-header, .table-row {
+  display: grid;
+  grid-template-columns: 0.9fr 0.9fr 1.8fr 0.7fr 0.7fr 1fr 0.8fr;
+  align-items: center;
+  padding: 0;
 
-        // El modo 'Nuevo' anterior basado en grid/form ya no existe,
-        // se ha sustituido por la estructura de tabla alineada
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
 
-// --- Estado 'Ver' (Tabla) ---
- .table-container {
-width: 100%;
- overflow-x: auto; // Permite el scroll horizontal en caso de pantallas pequeñas
+.table-header {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e2e8f0;
+  font-weight: 700;
+  color: $text-dark;
+  border-radius: 8px 8px 0 0;
+}
 
- .table-header-grid {
-                padding: 0;
-                margin: 0;
-                width: 100%;
-                min-width: 1000px; // Mínimo ancho para la tabla
 .header-cell {
- background-color: #f0f4f7;
-   font-weight: 600;
-  color: #444;
- padding: 10px 15px;
-border-bottom: 2px solid #ddd;
-                    text-transform: uppercase;
-                    font-size: 12px;
-                }
-            }
- .table-data-grid {
-                padding: 0;
-                margin: 0;
-                width: 100%;
-                min-width: 1000px; // Mínimo ancho para la tabla
-.data-row {
-                    border-bottom: 1px solid #eee;
-                    &:hover {
-                        background-color: #f8f9fa;
-                    }
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: $text-medium;
+}
+
 .data-cell {
-padding: 10px 15px; // PADDING ORIGINAL DE LA CELDA DE DATOS
-font-size: 14px;
-color: #555;
-white-space: nowrap;
-overflow: hidden;
-                        text-overflow: ellipsis;
-                    }
-                }
-            }
- // Estilos para Skeleton
- .skeleton-grid {
-.skeleton-row {
- ion-col {
-padding: 10px 15px;
-                    }
-                }
-            }
-        }
-        // ----------------------------------------------------
-        // FASE 6: ESTILOS PARA LA FILA EDITABLE (MODO "NUEVO")
-        // ----------------------------------------------------
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f4f7;
+  font-size: 14px;
+  color: $text-dark;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
 
-        .new-user-aligned-content {
-            // Un pequeño margen inferior para separar la fila editable de los botones
-            margin-bottom: 10px;
+  .table-row:last-of-type & {
+    border-bottom: none;
+  }
+}
 
-            .editable-row-grid {
-                // Alineamos los bordes de la fila editable con el grid de datos
-                min-width: 1000px;
-            }
-        }
+.form-container {
+  .table-header {
+    grid-template-columns: 0.8fr 0.8fr 1.0fr 0.9fr 0.65fr 0.65fr 0.9fr 0.7fr;
+  }
 
-        .editable-data-row {
-            // Resaltamos visualmente la fila en modo "Nuevo"
-            background-color: #f7f9fc;
-            border: 2px solid $menu-active-color; /* Usamos $menu-active-color (#4D82BC) */
-            border-radius: 8px;
-            margin: 5px 0;
+  .input-row {
+    background-color: #fcfcfc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    grid-template-columns: 0.8fr 0.8fr 1.0fr 0.9fr 0.65fr 0.65fr 0.9fr 0.7fr;
+  }
 
-            .data-cell {
-                // Limpiamos el padding de la celda para que lo tome el input
-                padding: 0;
-                display: flex;
-                align-items: center;
-                height: 44px; /* Altura fija para que coincida con el input/botón */
-            }
+  .input-cell {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    border-bottom: none !important;
+  }
 
-            .input-cell {
-                // Estilos para los campos de texto
-                ion-input {
-                    // Usamos fill="outline" en el HTML, aquí lo estilizamos para que parezca una celda
-                    --padding-start: 15px; /* Igual que el padding horizontal de la celda original */
-                    --padding-end: 15px;
-                    --padding-top: 0;
-                    --padding-bottom: 0;
-                    --background: transparent;
-                    --border-width: 0;
-                    font-size: 14px;
-                    color: #444;
-                    width: 100%;
-                    // Placeholder visible y estilizado
-                    &::placeholder {
-                        color: #ccc;
-                        font-style: italic;
-                    }
+  .cell-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 0;
+    font-size: 14px;
+    background-color: transparent;
 
-                    &[disabled] {
-                        opacity: 1;
-                        color: #888;
-                        text-align: left;
-                        font-weight: 500;
-                        background: #e9ecef; /* Un gris sutil para deshabilitado */
-                        border-right: 1px solid #ddd;
-                        height: 100%;
-                    }
-                }
-            }
+    &:focus {
+      outline: none;
+      border: 1px solid #000;
+      padding: 8px 10px;
+    }
 
-            // Estilo para los botones de selección (Grado, Grupo, Categoría)
-            .action-button-select {
-                // Se alinean exactamente al padding y tamaño de la celda de datos
-                height: 100%;
-                width: 100%;
-                margin: 0;
-                --padding-start: 15px;
-                --padding-end: 15px;
-                color: $menu-active-color;
-                text-transform: none;
-                font-size: 14px;
-                justify-content: flex-start; // Alineación a la izquierda como el texto
-            }
-        }
+    &::placeholder {
+      color: #999;
+      font-size: 13px;
+    }
+  }
 
-        // Posicionamiento de los botones de acción para la fila editable
-        .form-actions-aligned {
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-            padding: 15px 0 5px;
-        }
+  .select-button {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    color: $menu-active-color;
+    text-transform: none;
+    font-size: 13px;
+    justify-content: flex-start;
+  }
+}
 
- }
+.bottom-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.cancel-button {
+  --background: transparent;
+  --border-color: #{$button-color};
+  --border-width: 2px;
+  --border-style: solid;
+  --color: #{$button-color};
+  --border-radius: 12px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  text-transform: none;
+  font-weight: 600;
+}
+
+.confirm-button {
+  --background: #{$button-color};
+  --border-radius: 12px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  text-transform: none;
+  font-weight: 600;
+}
+
+.empty-state, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  text-align: center;
+
+  ion-icon {
+    font-size: 4rem;
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    font-weight: 600;
+    margin: 5px 0 10px 0;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.no-results {
+  padding: 20px 15px;
+  text-align: center;
+  border-top: 1px solid #f0f4f7;
 }

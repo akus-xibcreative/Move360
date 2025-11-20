@@ -2,11 +2,9 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FirestoreService } from '../../firebase/firestore.service';
 
-// Definimos la interfaz para el tipo de datos de la tarjeta
 export interface DashboardCard {
   title: string;
   value: number;
-  // Este campo contiene la RUTA del archivo SVG local
   icon: string;
 }
 
@@ -46,33 +44,32 @@ export class DashboardCardsComponent implements OnInit {
         }
       });
 
-      // Encontrar los IDs de las categorías específicas
-      let estudiantesCount = 0;
-      let profesoresCount = 0;
-      let tutoresCount = 0;
+      let studentsCount = 0;
+      let teachersCount = 0;
+      let tutorsCount = 0;
 
       categories.forEach(cat => {
         const desc = cat.desc?.toLowerCase() || '';
         const count = categoryCount.get(cat.id) || 0;
 
         if (desc === 'student') {
-          estudiantesCount = count;
+          studentsCount = count;
         } else if (desc === 'teacher') {
-          profesoresCount = count;
+          teachersCount = count;
         } else if (desc === 'tutor') {
-          tutoresCount = count;
+          tutorsCount = count;
         }
       });
 
-      // Actualizar las tarjetas con los valores reales
       this.cards.set([
-        { title: 'Estudiantes', value: estudiantesCount, icon: 'assets/icon/PhStudent.svg' },
-        { title: 'Profesores', value: profesoresCount, icon: 'assets/icon/Pencil.svg' },
-        { title: 'Tutores', value: tutoresCount, icon: 'assets/icon/BxUser.svg' },
+        { title: 'Estudiantes', value: studentsCount, icon: 'assets/icon/PhStudent.svg' },
+        { title: 'Profesores', value: teachersCount, icon: 'assets/icon/Pencil.svg' },
+        { title: 'Tutores', value: tutorsCount, icon: 'assets/icon/BxUser.svg' },
         { title: 'Pedidos', value: 0, icon: 'assets/icon/Shopping.svg' },
       ]);
     } catch (error) {
-      console.error('Error al cargar conteo de usuarios:', error);
+      console.error('Error loading user counts:', error);
     }
   }
 }
+

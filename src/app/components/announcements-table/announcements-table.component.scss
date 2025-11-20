@@ -1,6 +1,6 @@
 // Variables locales
 $card-bg: #fff;
-$accent-color: #4D82BC; // Color primario de acento
+$accent-color: #4D82BC; 
 $text-dark: #1a202c;
 $text-medium: #4a5568;
 $shadow-color: rgba(0, 0, 0, 0.05);
@@ -25,23 +25,21 @@ $header-bg: #f0f4f7;
 
 .table-container {
     width: 100%;
-    overflow-x: auto; // Permite el scroll horizontal si es necesario
+    overflow-x: auto; 
 }
 
 .announcements-grid {
     padding: 0;
     margin: 0;
     width: 100%;
-    // Aseguramos un ancho mínimo para una mejor visualización en desktop
     min-width: 800px;
 }
 
-// --- Estilos de Filas y Celdas ---
 
 .header-row {
     background-color: $header-bg;
     border-radius: 8px 8px 0 0;
-    margin-bottom: 5px; // Espacio visual para separar del cuerpo
+    margin-bottom: 5px; 
 
     .header-cell {
         font-weight: 600;
@@ -49,7 +47,7 @@ $header-bg: #f0f4f7;
         padding: 10px 15px;
         text-transform: uppercase;
         font-size: 12px;
-        border-right: 1px solid #e9ecef; // Separador de columnas sutil
+        border-right: 1px solid #e9ecef; 
 
         &:last-child {
             border-right: none;
@@ -58,13 +56,12 @@ $header-bg: #f0f4f7;
 }
 
 .data-row {
-    // Fondo claro para las filas de datos
-    --ion-grid-columns: 12; // Aseguramos el conteo de columnas
+    --ion-grid-columns: 12; 
     transition: background-color 0.15s;
     border-bottom: 1px solid #f0f0f0;
 
     &:hover {
-        background-color: #f7f9fc; // Highlight sutil al pasar el mouse
+        background-color: #f7f9fc; 
     }
 
     .data-cell {
@@ -76,7 +73,7 @@ $header-bg: #f0f4f7;
         text-overflow: ellipsis;
 
         &.detail-cell {
-            white-space: normal; // Permitir que el detalle fluya en varias líneas
+            white-space: normal; 
             line-height: 1.4;
         }
     }
@@ -94,6 +91,6 @@ $header-bg: #f0f4f7;
 .empty-row {
     border-bottom: none;
     .empty-cell {
-        min-height: 80px; // Espacio mínimo para que la card no se colapse si la tabla está vacía
+        min-height: 80px; 
     }
 }

@@ -6,56 +6,125 @@
 
       <div class="actions-row">
         <ion-searchbar
-          placeholder="Buscar por nombre de Categoría"
-          debounce="500"
+          placeholder="Buscar por nombre de clave"
+          debounce="300"
           class="custom-search-bar"
+          (ionInput)="filterCategories($event)"
         ></ion-searchbar>
+
         <ion-button
-          (click)="cambiarAEstadoVer()"
+          (click)="changeToViewState()"
           fill="solid"
           class="custom-button btn-view"
-          [disabled]="uiState === 'ver'"
+          [disabled]="uiState === 'view'"
         >
-          <ion-icon name="eye-outline" slot="start"></ion-icon>
           Ver
         </ion-button>
 
         <ion-button
-          (click)="cambiarAEstadoNuevo()"
+          (click)="changeToNewState()"
           fill="solid"
           class="custom-button btn-new"
-          [disabled]="uiState === 'nuevo'"
+          [disabled]="uiState === 'new'"
         >
-          <ion-icon name="add-outline" slot="start"></ion-icon>
           Nuevo
         </ion-button>
       </div>
     </div>
+
     <ion-card class="data-card">
       <ion-card-content class="data-content-area">
-        <div *ngIf="uiState === 'ver'" class="table-container">
-          <ion-text color="medium">
-            <p><strong>[Placeholder: Ver Categorías]</strong></p>
-            <p>Aquí se mostrará la tabla de categorías de usuario (A, B, C) y sus permisos asociados.</p>
-          </ion-text>
-          <ion-grid fixed class="table-data-grid skeleton-grid">
-            <ion-row *ngFor="let i of [1, 2, 3]" class="skeleton-row">
-                <ion-col size="3"><ion-skeleton-text animated style="width: 90%"></ion-skeleton-text></ion-col>
-                <ion-col size="5"><ion-skeleton-text animated style="width: 80%"></ion-skeleton-text></ion-col>
-                <ion-col size="4"><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></ion-col>
-            </ion-row>
-          </ion-grid>
+
+        <div *ngIf="uiState === 'view'" class="table-container">
+          <div class="table-header">
+            <div class="header-cell">Clave</div>
+            <div class="header-cell">Descripción</div>
+            <div class="header-cell seq-cell">Secuencia</div>
+          </div>
+
+          <div class="table-row" *ngFor="let category of filteredCategories">
+            <div class="data-cell">{{ category.id }}</div>
+            <div class="data-cell">{{ category.desc }}</div>
+            <div class="data-cell seq-cell">{{ category.seq }}</div>
+          </div>
+
+          <div *ngIf="filteredCategories.length === 0" class="no-results">
+            <ion-text color="medium">
+              <p>No se encontraron categorías que coincidan con la búsqueda.</p>
+            </ion-text>
+          </div>
         </div>
 
-        <div *ngIf="uiState === 'nuevo'" class="form-container">
-          <ion-text color="primary">
-            <p><strong>[Placeholder: Formulario Nueva Categoría]</strong></p>
-            <p>Aquí se diseñará el formulario para dar de alta una nueva categoría y sus permisos.</p>
+        <div *ngIf="uiState === 'new'" class="form-container">
+          <div class="table-header">
+            <div class="header-cell">Clave</div>
+            <div class="header-cell">Descripción</div>
+            <div class="header-cell seq-cell">Secuencia</div>
+          </div>
+
+          <div class="table-row input-row">
+            <div class="data-cell input-cell">
+              <input type="text" [(ngModel)]="newCategory.id" placeholder="Ingrese la clave" class="cell-input"/>
+            </div>
+            <div class="data-cell input-cell">
+              <input type="text" [(ngModel)]="newCategory.desc" placeholder="Ingrese la descripción" class="cell-input"/>
+            </div>
+            <div class="data-cell seq-cell input-cell">
+              <input type="text" inputmode="numeric" [(ngModel)]="newCategory.seq" (input)="onlyNumbers($event)" placeholder="Ingrese la secuencia" class="cell-input"/>
+            </div>
+          </div>
+
+           <div class="bottom-actions-row">
+            <ion-button
+            (click)="changeToViewState()"
+            fill="outline"
+            color="medium"
+            class="action-button cancel-button"
+            >
+            Cancelar
+          </ion-button>
+          <ion-button
+          (click)="confirmCategory()"
+          fill="solid"
+          color="primary"
+          class="custom-button confirm-button"
+          >
+          Confirmar
+        </ion-button>
+      </div>
+        </div>
+
+        <!-- Skeleton Loading -->
+        <div *ngIf="uiState === 'skeleton'" class="table-container">
+          <div class="table-header">
+            <div class="header-cell">Clave</div>
+            <div class="header-cell">Descripción</div>
+            <div class="header-cell seq-cell">Secuencia</div>
+          </div>
+
+          <div class="table-row" *ngFor="let i of [1, 2, 3, 4, 5]">
+            <div class="data-cell"><ion-skeleton-text animated style="width: 80%"></ion-skeleton-text></div>
+            <div class="data-cell"><ion-skeleton-text animated style="width: 90%"></ion-skeleton-text></div>
+            <div class="data-cell seq-cell"><ion-skeleton-text animated style="width: 50%"></ion-skeleton-text></div>
+          </div>
+        </div>
+
+        <!-- Estado Empty -->
+        <div *ngIf="uiState === 'empty'" class="empty-state">
+          <ion-icon name="search-outline" size="large"></ion-icon>
+          <ion-text color="medium">
+            <h3>Sin Resultados</h3>
+            <p>No se encontraron categorías que coincidan con su búsqueda.</p>
           </ion-text>
-          <!-- Mock de formulario -->
-          <ion-skeleton-text animated style="width: 100%; height: 40px; margin-bottom: 10px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 100%; height: 40px; margin-bottom: 10px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 150px; height: 40px; margin-top: 20px;"></ion-skeleton-text>
+        </div>
+
+        <!-- Estado Error -->
+        <div *ngIf="uiState === 'error'" class="error-state">
+          <ion-icon name="close-circle-outline" size="large"></ion-icon>
+          <ion-text color="danger">
+            <h3>Error de Conexión</h3>
+            <p>Ocurrió un problema al cargar los datos. Inténtelo de nuevo más tarde.</p>
+          </ion-text>
         </div>
 
       </ion-card-content>

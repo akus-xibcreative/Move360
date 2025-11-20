@@ -1,38 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  IonContent, IonText, IonButton, IonIcon, IonSearchbar,
-  IonCard, IonCardContent, IonGrid, IonRow, IonCol,
-  IonInput, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonList, IonItem, IonLabel, IonSkeletonText } from '@ionic/angular/standalone';
+  IonText, IonButton, IonSearchbar,
+  IonCard, IonCardContent, IonContent,
+  IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonList, IonItem, IonLabel, IonSkeletonText, SearchbarCustomEvent, IonIcon } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { eyeOutline, addOutline, searchOutline, closeOutline, checkmarkOutline, closeCircleOutline } from 'ionicons/icons';
+import { searchOutline, closeCircleOutline } from 'ionicons/icons';
 import { AuthenticationService } from '../../../firebase/authentication.service';
 import { FirestoreService } from '../../../firebase/firestore.service';
 
-addIcons({ eyeOutline, addOutline, searchOutline, closeOutline, checkmarkOutline });
+addIcons({ searchOutline, closeCircleOutline });
 
 @Component({
   selector: 'app-alta-usuario',
   templateUrl: './alta-usuario.page.html',
   styleUrls: ['./alta-usuario.page.scss'],
   standalone: true,
-  imports: [IonSkeletonText,
+  imports: [IonSkeletonText, IonIcon, IonContent,
     CommonModule, FormsModule,
-    IonContent, IonText, IonButton, IonIcon, IonSearchbar,
-    IonCard, IonCardContent, IonGrid, IonRow, IonCol,
-    IonInput, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonList, IonItem, IonLabel
+    IonText, IonButton, IonSearchbar,
+    IonCard, IonCardContent,
+    IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonList, IonItem, IonLabel
   ]
 })
 export class AltaUsuarioPage implements OnInit {
 
-  // Mocks de Estado de la UI
-  uiState: 'ver' | 'nuevo' | 'skeleton' | 'empty' | 'error' = 'ver'; // Estado inicial
+  uiState: 'view' | 'new' | 'skeleton' | 'empty' | 'error' = 'view';
 
-  // Mock de datos de la tabla (estado 'ver')
-  mockUsers: any[] = [];
+  allUsers: any[] = [];
+  filteredUsers: any[] = [];
 
-  // Datos para la fila editable (estado 'nuevo')
   newUser: any = {
     firstName: '',
     secondName: '',
@@ -45,15 +43,13 @@ export class AltaUsuarioPage implements OnInit {
     group_id: ''
   };
 
-  // Variables para Popups/Modales mock
   isGradeModalOpen = false;
   isGroupModalOpen = false;
   isCategoryModalOpen = false;
 
-  // Mocks para las opciones de selección
-  mockGrades: any[] = [];
-  mockGroups: any[] = [];
-  mockCategories: any[] = [];
+  allGrades: any[] = [];
+  allGroups: any[] = [];
+  allCategories: any[] = [];
 
   constructor(
     private authService: AuthenticationService,
@@ -65,22 +61,19 @@ export class AltaUsuarioPage implements OnInit {
     this.uiState = 'skeleton';
 
     try {
-      // Cargar todos los datos en paralelo antes de mostrar la tabla
       await Promise.all([
         this.loadGrades(),
         this.loadGroups(),
         this.loadCategories()
       ]);
 
-      // Una vez que tenemos las categorías, grados y grupos, cargar usuarios
       await this.loadUsers();
     } catch (error) {
-      console.error('Error al inicializar la página:', error);
+      console.error('Error initializing page:', error);
       this.uiState = 'error';
     }
   }
 
-  // Cargar usuarios desde Firestore
   async loadUsers() {
     try {
       const users = await this.firestoreService.getAllUsers();
@@ -88,71 +81,78 @@ export class AltaUsuarioPage implements OnInit {
       if (users.length === 0) {
         this.uiState = 'empty';
       } else {
-        this.mockUsers = users;
-        this.uiState = 'ver';
+        this.allUsers = users;
+        this.filteredUsers = [...users];
+        this.uiState = 'view';
       }
     } catch (error) {
-      console.error('Error al cargar usuarios:', error);
+      console.error('Error loading users:', error);
       this.uiState = 'error';
     }
   }
 
-  // Cargar grados desde Firestore
   async loadGrades() {
     try {
-      this.mockGrades = await this.firestoreService.getGrades();
-      console.log('Grados cargados:', this.mockGrades);
+      this.allGrades = await this.firestoreService.getGrades();
+      console.log('Grades loaded:', this.allGrades);
     } catch (error) {
-      console.error('Error al cargar grados:', error);
+      console.error('Error loading grades:', error);
     }
   }
 
-  // Cargar grupos desde Firestore
   async loadGroups() {
     try {
-      this.mockGroups = await this.firestoreService.getGroups();
-      console.log('Grupos cargados:', this.mockGroups);
+      this.allGroups = await this.firestoreService.getGroups();
+      console.log('Groups loaded:', this.allGroups);
     } catch (error) {
-      console.error('Error al cargar grupos:', error);
+      console.error('Error loading groups:', error);
     }
   }
 
-  // Cargar categorías desde Firestore
   async loadCategories() {
     try {
-      this.mockCategories = await this.firestoreService.getCategories();
-      console.log('Categorías cargadas:', this.mockCategories);
+      this.allCategories = await this.firestoreService.getCategories();
+      console.log('Categories loaded:', this.allCategories);
     } catch (error) {
-      console.error('Error al cargar categorías:', error);
+      console.error('Error loading categories:', error);
     }
   }
 
-  // --- Funciones de Comportamiento Visual Mock ---
 
-  // Simula la búsqueda con debounce (solo visual)
-  onSearchChange(event: any) {
-    const query = event.detail.value.toLowerCase();
-    console.log('Buscando (mock):', query);
-    // Lógica para mostrar Skeleton o Empty State basado en la búsqueda (Mock)
-    if (query === 'error') {
-      this.uiState = 'error';
-    } else if (query === 'vacio') {
+
+  filterUsers(event: SearchbarCustomEvent) {
+    const query = event.detail.value?.toLowerCase() || '';
+
+    if (query === '') {
+      this.filteredUsers = [...this.allUsers];
+      this.uiState = 'view';
+      return;
+    }
+
+    this.filteredUsers = this.allUsers.filter((user: any) => {
+      return user.firstName.toLowerCase().indexOf(query) > -1;
+    });
+    if (this.filteredUsers.length === 0) {
       this.uiState = 'empty';
-    } else if (query.length > 0) {
-      this.uiState = 'skeleton';
     } else {
-      this.uiState = 'ver';
+      this.uiState = 'view';
     }
   }
 
-  // Cambia el estado a 'Ver' (muestra la tabla con datos mock)
-  changeToViewState() {
-    this.uiState = 'ver';
+  onSearchChange(event: SearchbarCustomEvent) {
+    this.filterUsers(event);
+    const query = event.detail.value?.toLowerCase() || '';
+    if (query === 'error-test') {
+      this.uiState = 'error';
+    }
   }
 
-  // Cambia el estado a 'Nuevo' (muestra la fila editable)
+  changeToViewState() {
+    this.uiState = 'view';
+  }
+
   changeToNewState() {
-    this.uiState = 'nuevo';
+    this.uiState = 'new';
     this.newUser = {
       firstName: '',
       secondName: '',
@@ -166,15 +166,8 @@ export class AltaUsuarioPage implements OnInit {
     };
   }
 
-  // Cancela la edición y vuelve al estado 'Ver'
-  cancelEdit() {
-    this.uiState = 'ver';
-  }
-
-  // Confirma la edición/creación
   async confirmEdit() {
     try {
-      // Validar datos requeridos
       if (!this.newUser.email || !this.newUser.password) {
         alert('Por favor, ingrese correo y contraseña');
         return;
@@ -185,15 +178,13 @@ export class AltaUsuarioPage implements OnInit {
         return;
       }
 
-      console.log('Datos del nuevo usuario:', this.newUser);
+      console.log('New user data:', this.newUser);
 
       this.uiState = 'skeleton';
 
-      // Obtener el usuario administrador logueado ANTES de crear el nuevo usuario
       const adminUser = this.authService.getCurrentUser();
       const adminUid = adminUser?.uid || 'admin';
 
-      // Obtener datos del administrador desde Firestore
       let createdByName = 'admin';
       if (adminUid !== 'admin') {
         const adminData = await this.firestoreService.getUserData(adminUid);
@@ -202,7 +193,6 @@ export class AltaUsuarioPage implements OnInit {
         }
       }
 
-      // Crear usuario en Firebase Authentication
       const userCredential = await this.authService.createUser(
         this.newUser.email,
         this.newUser.password
@@ -210,7 +200,6 @@ export class AltaUsuarioPage implements OnInit {
 
       const timestamp = new Date();
 
-      // Preparar datos del usuario para Firestore según el esquema
       const userData = {
         firstName: this.newUser.firstName,
         secondName: this.newUser.secondName || '',
@@ -231,22 +220,19 @@ export class AltaUsuarioPage implements OnInit {
         }
       };
 
-      // Guardar datos adicionales en Firestore
       await this.firestoreService.createUserDocument(
         userCredential.user.uid,
         userData
       );
 
-      console.log('Usuario creado exitosamente');
+      console.log('User created successfully');
       alert('Usuario creado exitosamente');
 
-      // Recargar la lista de usuarios
       await this.loadUsers();
     } catch (error: any) {
-      console.error('Error al crear usuario:', error);
-      this.uiState = 'nuevo';
+      console.error('Error creating user:', error);
+      this.uiState = 'new';
 
-      // Manejar errores específicos de Firebase
       if (error.code === 'auth/email-already-in-use') {
         alert('Este correo ya está registrado');
       } else if (error.code === 'auth/weak-password') {
@@ -259,59 +245,48 @@ export class AltaUsuarioPage implements OnInit {
     }
   }
 
-  // Abre Modales de selección
   openModal(type: 'grade' | 'group' | 'category') {
     if (type === 'grade') this.isGradeModalOpen = true;
     if (type === 'group') this.isGroupModalOpen = true;
     if (type === 'category') this.isCategoryModalOpen = true;
   }
 
-  // Seleccionar grado
   selectGrade(grade: any) {
     this.newUser.grade_id = grade.id;
     this.isGradeModalOpen = false;
   }
 
-  // Seleccionar grupo
   selectGroup(group: any) {
     this.newUser.group_id = group.id;
     this.isGroupModalOpen = false;
   }
 
-  // Seleccionar categoría
   selectCategory(category: any) {
     this.newUser.category_id = category.id;
     this.isCategoryModalOpen = false;
   }
 
-  // Cierra Modales de selección y aplica la selección mock
-  closeModal(type: 'grade' | 'group' | 'category', selection: string | null = null) {
-    if (selection) {
-      this.newUser[type] = selection;
-    }
+  closeModal(type: 'grade' | 'group' | 'category') {
     if (type === 'grade') this.isGradeModalOpen = false;
     if (type === 'group') this.isGroupModalOpen = false;
     if (type === 'category') this.isCategoryModalOpen = false;
   }
 
-  // Obtener la descripción de la categoría a partir del ID
   getCategoryDescription(categoryId: string): string {
     if (!categoryId) return '';
-    const category = this.mockCategories.find(cat => cat.id === categoryId);
+    const category = this.allCategories.find(cat => cat.id === categoryId);
     return category ? category.desc : categoryId;
   }
 
-  // Obtener la descripción del grado a partir del ID
   getGradeDescription(gradeId: string): string {
     if (!gradeId) return '';
-    const grade = this.mockGrades.find(g => g.id === gradeId);
+    const grade = this.allGrades.find(g => g.id === gradeId);
     return grade ? grade.desc : gradeId;
   }
 
-  // Obtener la descripción del grupo a partir del ID
   getGroupDescription(groupId: string): string {
     if (!groupId) return '';
-    const group = this.mockGroups.find(g => g.id === groupId);
+    const group = this.allGroups.find(g => g.id === groupId);
     return group ? group.desc : groupId;
   }
 }

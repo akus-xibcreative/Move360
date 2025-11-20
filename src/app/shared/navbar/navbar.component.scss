@@ -1,5 +1,5 @@
 $button-color: #84B6F4;
-$menu-active-color: #4D82BC; 
+$menu-active-color: #4D82BC;
 
 .navbar-container {
   --background: #fff;
@@ -13,6 +13,12 @@ $menu-active-color: #4D82BC;
   flex-direction: column;
   align-items: center;
   padding: 30px 10px 20px 10px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
 
   .logo-image {
     display: block;

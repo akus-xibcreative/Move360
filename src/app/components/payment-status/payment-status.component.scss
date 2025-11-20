@@ -24,12 +24,12 @@ $text-medium: #4a5568;
     .card-body {
         display: flex;
         // Ajuste clave: Usar space-around para separar la leyenda y la gráfica
-        justify-content: space-around;
+        justify-content: space-around; 
         align-items: center;
         gap: 30px;
         padding-top: 10px;
         // Aseguramos que la leyenda y gráfica ocupen el espacio disponible
-        flex-grow: 1;
+        flex-grow: 1; 
     }
 }
 
@@ -41,7 +41,7 @@ $text-medium: #4a5568;
     font-size: 14px;
     color: $text-medium;
     // La leyenda debe ocupar más espacio para que la gráfica no se mueva al centro
-    flex-basis: 50%;
+    flex-basis: 50%; 
     justify-content: center; // Centrado verticalmente dentro de su contenedor
 
     .legend-item {
@@ -59,7 +59,7 @@ $text-medium: #4a5568;
 
     .paid-color { background-color: $paid-color; }
     .pending-color { background-color: $pending-color; }
-
+    
     .label {
         font-weight: 500;
         color: $text-dark;

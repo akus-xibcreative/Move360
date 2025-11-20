@@ -1,24 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { IonList, IonItem, IonIcon, IonLabel, IonContent, IonAvatar, IonText } from '@ionic/angular/standalone';
+import { Component } from '@angular/core';
+import { IonList, IonItem, IonLabel, IonContent } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { personOutline, peopleOutline, bookOutline, schoolOutline, mailOutline, cartOutline, homeOutline } from 'ionicons/icons';
-import { addIcons } from 'ionicons';
-addIcons({ personOutline, peopleOutline, bookOutline, schoolOutline, mailOutline, cartOutline, homeOutline });
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   standalone: true,
-  imports: [CommonModule, RouterModule, IonList, IonItem, IonIcon, IonLabel, IonContent, IonAvatar, IonText]
+  imports: [CommonModule, RouterModule, IonList, IonItem, IonLabel, IonContent]
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
 
-
+  constructor(private router: Router) {}
 
   menuItems = [
-    { title: 'Inicio', url: '/admin/home' }, 
+    { title: 'Inicio', url: '/admin/home' },
     { title: 'Usuarios', url: '/admin/usuarios' },
     { title: 'Estudiante', url: '/admin/estudiante' },
     { title: 'Profesor', url: '/admin/profesor' },
@@ -27,8 +24,7 @@ export class NavbarComponent implements OnInit {
     { title: 'Productos', url: '/admin/productos'},
   ];
 
-  constructor() { }
-
-  ngOnInit() {}
-
+  navigateToHome() {
+    this.router.navigate(['/admin/home']);
+  }
 }

@@ -11,6 +11,20 @@
         <ion-text color="dark">
           <h1>Bienvenido, {{ userName }}</h1>
         </ion-text>
+        <div class="user-avatar" (click)="togglePopover($event)" id="user-avatar-trigger">
+          <img src="assets/icon/BxUser.svg" alt="Usuario">
+        </div>
+
+        <ion-popover [isOpen]="isPopoverOpen" trigger="user-avatar-trigger" (didDismiss)="isPopoverOpen = false" [showBackdrop]="false" size="auto">
+          <ng-template>
+            <ion-list class="logout-list">
+              <ion-item button (click)="logout()" lines="none" class="logout-item">
+                <ion-icon name="log-out-outline" slot="start"></ion-icon>
+                <ion-label>Cerrar Sesión</ion-label>
+              </ion-item>
+            </ion-list>
+          </ng-template>
+        </ion-popover>
       </div>
 
       <div class="main-content-area">

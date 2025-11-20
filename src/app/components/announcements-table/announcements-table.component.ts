@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-// Importamos los componentes de Ionic necesarios para la tabla
-import { IonGrid, IonRow, IonCol, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonGrid, IonRow, IonCol, IonButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-announcements-table',
   standalone: true,
-  imports: [CommonModule, IonGrid, IonRow, IonCol, IonButton, IonIcon],
+  imports: [CommonModule, IonGrid, IonRow, IonCol, IonButton],
   templateUrl: './announcements-table.component.html',
   styleUrls: ['./announcements-table.component.scss'],
 })

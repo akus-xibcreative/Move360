@@ -1,15 +1,9 @@
-// src/app/admin/usuarios/usuarios.page.scss
-
-// Aseguramos que el contenedor de esta página no ponga un fondo,
-// permitiendo que se vea el fondo global del layout base.
 .usuarios-page-container {
-  // El fondo debe ser transparente para que se vea el color global del layout padre (#EFF2FB)
   background-color: transparent;
   width: 100%;
   height: 100%;
 }
 
-// También eliminamos cualquier posible fondo en el ion-content si existiera
 ion-content {
     --background: transparent !important;
 }

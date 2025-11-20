@@ -1,20 +1,15 @@
-<!-- Grid de 2x2 para las tarjetas de resumen -->
 <div class="dashboard-grid">
   @for (card of cards(); track card.title) {
     <div class="card">
 
-      <!-- 1. Título: Siempre centrado arriba -->
       <p class="title">{{ card.title }}</p>
 
-      <!-- 2. Contenido Inferior (Ícono y Valor): Usaremos Flex para la alineación horizontal -->
       <div class="card-content-bottom">
 
-        <!-- Ícono SVG a la izquierda -->
         <div class="icon-container">
           <img [src]="card.icon" [alt]="card.title" class="custom-icon" />
         </div>
 
-        <!-- Valor (Cantidad) a la derecha -->
         <p class="value">{{ card.value }}</p>
       </div>
 

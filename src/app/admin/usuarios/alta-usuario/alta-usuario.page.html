@@ -1,26 +1,21 @@
 <div class="alta-usuario-container">
-
-  <!-- TÍTULO Y ACCIONES PRINCIPALES -->
   <div class="header-actions">
     <ion-text color="dark">
       <h2 class="page-title">Alta de Usuario</h2>
     </ion-text>
 
     <div class="actions-row">
-      <!-- Buscador con debounce visual mock -->
       <ion-searchbar
         (ionInput)="onSearchChange($event)"
-        placeholder="Buscar por Nombre, Apellido, o Correo"
+        placeholder="Buscar por Nombre"
         debounce="500"
         class="custom-search-bar"
       ></ion-searchbar>
-
-      <!-- Botones "Ver" y "Nuevo" (Sin iconos) -->
       <ion-button
         (click)="changeToViewState()"
         fill="solid"
         class="custom-button btn-view"
-        [disabled]="uiState === 'ver'"
+        [disabled]="uiState === 'view'"
       >
         Ver
       </ion-button>
@@ -29,133 +24,135 @@
         (click)="changeToNewState()"
         fill="solid"
         class="custom-button btn-new"
-        [disabled]="uiState === 'nuevo'"
+        [disabled]="uiState === 'new'"
       >
         Nuevo
       </ion-button>
     </div>
   </div>
 
-  <!-- CONTENEDOR PRINCIPAL DE DATOS (TARJETA) -->
   <ion-card class="data-card">
     <ion-card-content class="data-content-area">
 
-      <!-- Encabezados de la tabla (Siempre visibles cuando se muestra una tabla) -->
-      <div *ngIf="uiState === 'ver' || uiState === 'nuevo' || uiState === 'skeleton'" class="table-container">
-        <ion-grid fixed class="table-header-grid">
-          <ion-row>
-            <!-- COLUMNAS CON LOS TAMAÑOS DEFINIDOS: 0.5 + 1.25 + 1.25 + 1.5 + 2.5 + 1 + 1 + 2 + 1 = 12 -->
-            <ion-col size="0.5" class="header-cell">Id</ion-col>
-            <ion-col size="1.25" class="header-cell">Nombre</ion-col>
-            <ion-col size="1.25" class="header-cell">Apellidos</ion-col>
-            <ion-col size="1.5" class="header-cell">Contraseña</ion-col>
-            <ion-col size="2.5" class="header-cell">Correo</ion-col>
-            <ion-col size="1" class="header-cell">Grado</ion-col>
-            <ion-col size="1" class="header-cell">Grupo</ion-col>
-            <ion-col size="2" class="header-cell">Categoría</ion-col>
-            <ion-col size="1" class="header-cell">Celular</ion-col>
-          </ion-row>
-        </ion-grid>
+      <!-- Ver Tabla de Usuarios  -->
+      <div *ngIf="uiState === 'view'" class="table-container">
+        <div class="table-header">
+          <div class="header-cell">Nombre</div>
+          <div class="header-cell">Apellidos</div>
+          <div class="header-cell">Correo</div>
+          <div class="header-cell">Grado</div>
+          <div class="header-cell">Grupo</div>
+          <div class="header-cell">Categoría</div>
+          <div class="header-cell">Celular</div>
+        </div>
+
+        <div class="table-row" *ngFor="let user of filteredUsers">
+          <div class="data-cell">{{ user.firstName }}</div>
+          <div class="data-cell">{{ user.lastName }}</div>
+          <div class="data-cell">{{ user.email }}</div>
+          <div class="data-cell">{{ getGradeDescription(user.grade_id) }}</div>
+          <div class="data-cell">{{ getGroupDescription(user.group_id) }}</div>
+          <div class="data-cell">{{ getCategoryDescription(user.category_id) }}</div>
+          <div class="data-cell">{{ user.phone }}</div>
+        </div>
+
+        <div *ngIf="filteredUsers.length === 0" class="no-results">
+          <ion-text color="medium">
+            <p>No se encontraron usuarios que coincidan con la búsqueda.</p>
+          </ion-text>
+        </div>
       </div>
 
-      <!-- 1. ESTADO: Nuevo Usuario (FILA EDITABLE ALINEADA) -->
-      <div *ngIf="uiState === 'nuevo'" class="new-user-aligned-content">
-        <!-- Fila Editable que imita la Fila de Datos -->
-        <ion-grid fixed class="table-data-grid editable-row-grid">
-          <ion-row class="data-row editable-data-row">
-            <!-- ID (Input deshabilitado para consistencia) -->
-            <ion-col size="0.5" class="data-cell">
-              <ion-input disabled value="--"></ion-input>
-            </ion-col>
-            <!-- Nombre -->
-            <ion-col size="1.25" class="data-cell">
-              <ion-input [(ngModel)]="newUser.firstName" placeholder="Nombre"></ion-input>
-            </ion-col>
-            <!-- Apellidos -->
-            <ion-col size="1.25" class="data-cell">
-              <ion-input [(ngModel)]="newUser.lastName" placeholder="Apellidos"></ion-input>
-            </ion-col>
-            <!-- Contraseña -->
-            <ion-col size="1.5" class="data-cell">
-              <ion-input [(ngModel)]="newUser.password" type="password" placeholder="Contraseña"></ion-input>
-            </ion-col>
-            <!-- Correo -->
-            <ion-col size="2.5" class="data-cell">
-              <ion-input [(ngModel)]="newUser.email" type="email" placeholder="Correo"></ion-input>
-            </ion-col>
+      <!-- Nuevo Usuario  -->
+      <div *ngIf="uiState === 'new'" class="form-container">
+        <div class="table-header">
+          <div class="header-cell">Nombre</div>
+          <div class="header-cell">Apellidos</div>
+          <div class="header-cell">Correo</div>
+          <div class="header-cell">Contraseña</div>
+          <div class="header-cell">Grado</div>
+          <div class="header-cell">Grupo</div>
+          <div class="header-cell">Categoría</div>
+          <div class="header-cell">Celular</div>
+        </div>
 
-            <!-- Grado (Botón que abre Modal) -->
-            <ion-col size="1" class="data-cell action-cell">
-              <ion-button (click)="openModal('grade')" fill="clear" size="small" class="action-button-select">
-                {{ newUser.grade_id || 'Grado' }}
-              </ion-button>
-            </ion-col>
-            <!-- Grupo (Botón que abre Modal) -->
-            <ion-col size="1" class="data-cell action-cell">
-              <ion-button (click)="openModal('group')" fill="clear" size="small" class="action-button-select">
-                {{ newUser.group_id || 'Grupo' }}
-              </ion-button>
-            </ion-col>
-            <!-- Categoría (Botón que abre Modal) -->
-            <ion-col size="2" class="data-cell action-cell">
-              <ion-button (click)="openModal('category')" fill="clear" size="small" class="action-button-select">
-                {{ newUser.category_id || 'Categoría' }}
-              </ion-button>
-            </ion-col>
-            <!-- Celular -->
-            <ion-col size="1" class="data-cell">
-              <ion-input [(ngModel)]="newUser.phone" placeholder="Celular"></ion-input>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+        <div class="table-row input-row">
+          <div class="data-cell input-cell">
+            <input type="text" [(ngModel)]="newUser.firstName" placeholder="Nombre" class="cell-input" />
+          </div>
+          <div class="data-cell input-cell">
+            <input type="text" [(ngModel)]="newUser.lastName" placeholder="Apellidos" class="cell-input" />
+          </div>
+          <div class="data-cell input-cell">
+            <input type="email" [(ngModel)]="newUser.email" placeholder="Correo" class="cell-input" />
+          </div>
+          <div class="data-cell input-cell">
+            <input type="password" [(ngModel)]="newUser.password" placeholder="Contraseña" class="cell-input" />
+          </div>
+          <div class="data-cell input-cell">
+            <ion-button (click)="openModal('grade')" fill="clear" size="small" class="select-button">
+              {{ getGradeDescription(newUser.grade_id) || 'Seleccionar' }}
+            </ion-button>
+          </div>
+          <div class="data-cell input-cell">
+            <ion-button (click)="openModal('group')" fill="clear" size="small" class="select-button">
+              {{ getGroupDescription(newUser.group_id) || 'Seleccionar' }}
+            </ion-button>
+          </div>
+          <div class="data-cell input-cell">
+            <ion-button (click)="openModal('category')" fill="clear" size="small" class="select-button">
+              {{ getCategoryDescription(newUser.category_id) || 'Seleccionar' }}
+            </ion-button>
+          </div>
+          <div class="data-cell input-cell">
+            <input type="tel" [(ngModel)]="newUser.phone" placeholder="Celular" class="cell-input" />
+          </div>
+        </div>
 
-        <!-- Botones de Acción de Fila Editable (Alineados a la derecha bajo la tabla) -->
-        <div class="form-actions-aligned">
-          <ion-button (click)="cancelEdit()" fill="clear" color="medium">
+        <div class="bottom-actions-row">
+          <ion-button
+            (click)="changeToViewState()"
+            fill="outline"
+            color="medium"
+            class="action-button cancel-button"
+          >
             Cancelar
           </ion-button>
-          <ion-button (click)="confirmEdit()" fill="solid" class="custom-button">
+          <ion-button
+            (click)="confirmEdit()"
+            fill="solid"
+            color="primary"
+            class="custom-button confirm-button"
+          >
             Confirmar
           </ion-button>
         </div>
       </div>
 
-      <!-- 2. ESTADO: Ver Tabla de Usuarios (SOLO MUESTRA LAS FILAS DE DATOS) -->
-      <div *ngIf="uiState === 'ver'" class="table-container">
-        <!-- Filas de datos mock -->
-        <ion-grid fixed class="table-data-grid">
-          <ion-row *ngFor="let user of mockUsers" class="data-row">
-            <ion-col size="0.5" class="data-cell">{{ user.id }}</ion-col>
-            <ion-col size="1.25" class="data-cell">{{ user.firstName }}</ion-col>
-            <ion-col size="1.25" class="data-cell">{{ user.lastName }}</ion-col>
-            <ion-col size="1.5" class="data-cell">*******</ion-col>
-            <ion-col size="2.5" class="data-cell">{{ user.email }}</ion-col>
-            <ion-col size="1" class="data-cell">{{ getGradeDescription(user.grade_id) }}</ion-col>
-            <ion-col size="1" class="data-cell">{{ getGroupDescription(user.group_id) }}</ion-col>
-            <ion-col size="2" class="data-cell">{{ getCategoryDescription(user.category_id) }}</ion-col>
-            <ion-col size="1" class="data-cell">{{ user.phone }}</ion-col>
-          </ion-row>
-        </ion-grid>
-      </div>
-
-      <!-- 3. ESTADO: Skeleton (Carga Visual) -->
+      <!-- Skeleton Loading -->
       <div *ngIf="uiState === 'skeleton'" class="table-container">
-        <ion-grid fixed class="table-data-grid skeleton-grid">
-          <ion-row *ngFor="let i of [1, 2, 3, 4, 5]" class="skeleton-row">
-            <ion-col size="0.5"><ion-skeleton-text animated style="width: 80%"></ion-skeleton-text></ion-col>
-            <ion-col size="1.25"><ion-skeleton-text animated style="width: 90%"></ion-skeleton-text></ion-col>
-            <ion-col size="1.25"><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></ion-col>
-            <ion-col size="1.5"><ion-skeleton-text animated style="width: 50%"></ion-skeleton-text></ion-col>
-            <ion-col size="2.5"><ion-skeleton-text animated style="width: 95%"></ion-skeleton-text></ion-col>
-            <ion-col size="1"><ion-skeleton-text animated style="width: 40%"></ion-skeleton-text></ion-col>
-            <ion-col size="1"><ion-skeleton-text animated style="width: 60%"></ion-skeleton-text></ion-col>
-            <ion-col size="2"><ion-skeleton-text animated style="width: 40%"></ion-skeleton-text></ion-col>
-            <ion-col size="1"><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></ion-col>
-          </ion-row>
-        </ion-grid>
+        <div class="table-header">
+          <div class="header-cell">Nombre</div>
+          <div class="header-cell">Apellidos</div>
+          <div class="header-cell">Correo</div>
+          <div class="header-cell">Grado</div>
+          <div class="header-cell">Grupo</div>
+          <div class="header-cell">Categoría</div>
+          <div class="header-cell">Celular</div>
+        </div>
+
+        <div class="table-row" *ngFor="let i of [1, 2, 3, 4, 5]">
+          <div class="data-cell"><ion-skeleton-text animated style="width: 80%"></ion-skeleton-text></div>
+          <div class="data-cell"><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></div>
+          <div class="data-cell"><ion-skeleton-text animated style="width: 90%"></ion-skeleton-text></div>
+          <div class="data-cell"><ion-skeleton-text animated style="width: 60%"></ion-skeleton-text></div>
+          <div class="data-cell"><ion-skeleton-text animated style="width: 50%"></ion-skeleton-text></div>
+          <div class="data-cell"><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></div>
+          <div class="data-cell"><ion-skeleton-text animated style="width: 65%"></ion-skeleton-text></div>
+        </div>
       </div>
 
-      <!-- 4. ESTADO: Empty (Sin Resultados) -->
+      <!-- Estado Empty -->
       <div *ngIf="uiState === 'empty'" class="empty-state">
         <ion-text color="medium">
           <ion-icon name="search-outline" size="large"></ion-icon>
@@ -164,7 +161,7 @@
         </ion-text>
       </div>
 
-      <!-- 5. ESTADO: Error -->
+      <!-- Estado Error -->
       <div *ngIf="uiState === 'error'" class="error-state">
         <ion-text color="danger">
           <ion-icon name="close-circle-outline" size="large"></ion-icon>
@@ -175,8 +172,6 @@
 
     </ion-card-content>
   </ion-card>
-
-  <!-- MODALES Mock para selección de Grado, Grupo y Categoría (Se mantienen sin cambios) -->
 
   <!-- Modal Grado -->
   <ion-modal [isOpen]="isGradeModalOpen" (didDismiss)="closeModal('grade')">
@@ -191,7 +186,7 @@
       </ion-header>
       <ion-content>
         <ion-list>
-          <ion-item *ngFor="let grade of mockGrades" button (click)="selectGrade(grade)">
+          <ion-item *ngFor="let grade of allGrades" button (click)="selectGrade(grade)">
             <ion-label>{{ grade.desc }}</ion-label>
           </ion-item>
         </ion-list>
@@ -212,7 +207,7 @@
       </ion-header>
       <ion-content>
         <ion-list>
-          <ion-item *ngFor="let group of mockGroups" button (click)="selectGroup(group)">
+          <ion-item *ngFor="let group of allGroups" button (click)="selectGroup(group)">
             <ion-label>{{ group.desc }}</ion-label>
           </ion-item>
         </ion-list>
@@ -233,7 +228,7 @@
       </ion-header>
       <ion-content>
         <ion-list>
-          <ion-item *ngFor="let category of mockCategories" button (click)="selectCategory(category)">
+          <ion-item *ngFor="let category of allCategories" button (click)="selectCategory(category)">
             <ion-label>{{ category.desc }}</ion-label>
           </ion-item>
         </ion-list>

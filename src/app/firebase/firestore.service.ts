@@ -7,29 +7,17 @@ import { Firestore, doc, getDoc, setDoc, collection, getDocs } from '@angular/fi
 export class FirestoreService {
   firestore: Firestore = inject(Firestore)
 
-  constructor() {
-    console.log('FirestoreService');
-  }
-
-  // === Read === //
   async getUserData(uid: string) {
     const userDoc = doc(this.firestore, `users/${uid}`);
     const docSnap = await getDoc(userDoc);
-
-    if (docSnap.exists()) {
-      return docSnap.data();
-    } else {
-      return null;
-    }
+    return docSnap.exists() ? docSnap.data() : null;
   }
 
-  // === Create === //
   async createUserDocument(uid: string, userData: any) {
     const userDoc = doc(this.firestore, `users/${uid}`);
     await setDoc(userDoc, userData);
   }
 
-  // === Get All Users === //
   async getAllUsers() {
     const usersCollection = collection(this.firestore, 'users');
     const querySnapshot = await getDocs(usersCollection);
@@ -45,7 +33,6 @@ export class FirestoreService {
     return users;
   }
 
-  // === Get Grades === //
   async getGrades() {
     const gradesCollection = collection(this.firestore, 'grades');
     const querySnapshot = await getDocs(gradesCollection);
@@ -61,7 +48,11 @@ export class FirestoreService {
     return grades;
   }
 
-  // === Get Groups === //
+  async createGrade(gradeId: string, gradeData: any) {
+    const gradeDoc = doc(this.firestore, `grades/${gradeId}`);
+    await setDoc(gradeDoc, gradeData);
+  }
+
   async getGroups() {
     const groupsCollection = collection(this.firestore, 'groups');
     const querySnapshot = await getDocs(groupsCollection);
@@ -77,7 +68,11 @@ export class FirestoreService {
     return groups;
   }
 
-  // === Get Categories === //
+  async createGroup(groupId: string, groupData: any) {
+    const groupDoc = doc(this.firestore, `groups/${groupId}`);
+    await setDoc(groupDoc, groupData);
+  }
+
   async getCategories() {
     const categoriesCollection = collection(this.firestore, 'user_categories');
     const querySnapshot = await getDocs(categoriesCollection);
@@ -91,5 +86,10 @@ export class FirestoreService {
     });
 
     return categories;
+  }
+
+  async createCategory(categoryId: string, categoryData: any) {
+    const categoryDoc = doc(this.firestore, `user_categories/${categoryId}`);
+    await setDoc(categoryDoc, categoryData);
   }
 }

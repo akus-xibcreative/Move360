@@ -1,13 +1,10 @@
 <div class="table-card">
-  <!-- Card Header -->
   <div class="card-header">
     <h2 class="card-title">Comunicados</h2>
   </div>
 
-  <!-- Table Content -->
   <div class="table-container">
     <ion-grid class="announcements-grid">
-      <!-- Table Header -->
       <ion-row class="header-row">
         <ion-col size="1" class="header-cell">ID</ion-col>
         <ion-col size="3" class="header-cell">Nombre</ion-col>
@@ -16,7 +13,6 @@
         <ion-col size="2" class="header-cell action-cell">Ir al Comunicado</ion-col>
       </ion-row>
 
-      <!-- Table Data Rows -->
       @for (announcement of announcements; track announcement.id) {
         <ion-row class="data-row">
           <ion-col size="1" class="data-cell">{{ announcement.id }}</ion-col>
@@ -31,10 +27,8 @@
         </ion-row>
       }
 
-      <!-- Empty Row for visual consistency if no data -->
       <ion-row class="data-row empty-row">
         <ion-col size="12" class="data-cell empty-cell">
-          <!-- Espacio de relleno para la tabla -->
         </ion-col>
       </ion-row>
 

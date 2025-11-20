@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule]
 })
-export class SubNavbarComponent implements OnInit {
+export class SubNavbarComponent {
 
   menuItems = [
     { title: 'Alta de usuario', url: 'alta-usuario' },
@@ -17,8 +17,4 @@ export class SubNavbarComponent implements OnInit {
     { title: 'Alta de grupo', url: 'alta-grupo' },
     { title: 'Alta de categoría de usuario', url: 'alta-categoria' },
   ];
-
-  constructor() { }
-
-  ngOnInit() {}
 }

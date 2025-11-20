@@ -1,6 +1,5 @@
 <div class="alta-grupo-container">
 
-    <!-- TÍTULO Y ACCIONES PRINCIPALES (Mismo patrón de Alta de Usuario) -->
     <div class="header-actions">
       <ion-text color="dark">
         <h2 class="page-title">Alta de Grupo</h2>
@@ -8,63 +7,127 @@
 
       <div class="actions-row">
         <ion-searchbar
-          placeholder="Buscar por nombre de Grupo"
-          debounce="500"
+          placeholder="Buscar por clave"
+          debounce="300"
           class="custom-search-bar"
+          (ionInput)="filterGroups($event)"
         ></ion-searchbar>
 
-        <!-- Botones "Ver" y "Nuevo" -->
         <ion-button
-          (click)="cambiarAEstadoVer()"
+          (click)="changeToViewState()"
           fill="solid"
           class="custom-button btn-view"
-          [disabled]="uiState === 'ver'"
+          [disabled]="uiState === 'view'"
         >
-          <ion-icon name="eye-outline" slot="start"></ion-icon>
           Ver
         </ion-button>
 
         <ion-button
-          (click)="cambiarAEstadoNuevo()"
+          (click)="changeToNewState()"
           fill="solid"
           class="custom-button btn-new"
-          [disabled]="uiState === 'nuevo'"
+          [disabled]="uiState === 'new'"
         >
-          <ion-icon name="add-outline" slot="start"></ion-icon>
           Nuevo
         </ion-button>
       </div>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL DE DATOS (TARJETA) -->
     <ion-card class="data-card">
       <ion-card-content class="data-content-area">
 
-        <!-- Contenido de Relleno -->
-        <div *ngIf="uiState === 'ver'" class="table-container">
-          <ion-text color="medium">
-            <p><strong>[Placeholder: Ver Grupos]</strong></p>
-            <p>Aquí se mostrará la tabla de grupos (Infantil, Jóvenes, Adultos) con su horario y ubicación.</p>
-          </ion-text>
-          <!-- Mock de tabla con skeleton para mantener el look and feel -->
-          <ion-grid fixed class="table-data-grid skeleton-grid">
-            <ion-row *ngFor="let i of [1, 2, 3]" class="skeleton-row">
-                <ion-col size="3"><ion-skeleton-text animated style="width: 90%"></ion-skeleton-text></ion-col>
-                <ion-col size="5"><ion-skeleton-text animated style="width: 80%"></ion-skeleton-text></ion-col>
-                <ion-col size="4"><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></ion-col>
-            </ion-row>
-          </ion-grid>
+                <div *ngIf="uiState === 'view'" class="table-container">
+
+        <div class="table-header">
+            <div class="header-cell">Clave</div>
+            <div class="header-cell">Descripción</div>
+            <div class="header-cell seq-cell">Secuencia</div>
+          </div>
+
+          <div class="table-row" *ngFor="let group of filteredGroups">
+            <div class="data-cell">{{ group.id }}</div>
+            <div class="data-cell">{{ group.desc }}</div>
+            <div class="data-cell seq-cell">{{ group.seq }}</div>
+          </div>
+
+          <div *ngIf="filteredGroups.length === 0" class="no-results">
+            <ion-text color="medium">
+              <p>No se encontraron grupos que coincidan con la búsqueda.</p>
+            </ion-text>
+          </div>
         </div>
 
-        <div *ngIf="uiState === 'nuevo'" class="form-container">
-          <ion-text color="primary">
-            <p><strong>[Placeholder: Formulario Nuevo Grupo]</strong></p>
-            <p>Aquí se diseñará el formulario para dar de alta un nuevo grupo.</p>
+        <div *ngIf="uiState === 'new'" class="form-container">
+
+          <div class="table-header">
+            <div class="header-cell">Clave</div>
+            <div class="header-cell">Descripción</div>
+            <div class="header-cell seq-cell">Secuencia</div>
+          </div>
+
+          <div class="table-row input-row">
+            <div class="data-cell input-cell">
+              <input type="text" [(ngModel)]="newGroup.id" placeholder="Ingrese clave" class="cell-input" />
+            </div>
+            <div class="data-cell input-cell">
+              <input type="text" [(ngModel)]="newGroup.desc" placeholder="Ingrese descripción" class="cell-input" />
+            </div>
+            <div class="data-cell input-cell seq-cell">
+              <input type="text" inputmode="numeric" [(ngModel)]="newGroup.seq" (input)="onlyNumbers($event)" placeholder="Ingrese secuencia" class="cell-input" />
+            </div>
+          </div>
+
+      <div class="bottom-actions-row">
+            <ion-button
+            (click)="changeToViewState()"
+            fill="outline"
+            color="medium"
+            class="action-button cancel-button"
+            >
+            Cancelar
+          </ion-button>
+          <ion-button
+          (click)="confirmGroup()"
+          fill="solid"
+          color="primary"
+          class="custom-button confirm-button"
+          >
+          Confirmar
+        </ion-button>
+      </div>
+        </div>
+
+        <!-- Skeleton Loading -->
+        <div *ngIf="uiState === 'skeleton'" class="table-container">
+          <div class="table-header">
+            <div class="header-cell">Clave</div>
+            <div class="header-cell">Descripción</div>
+            <div class="header-cell seq-cell">Secuencia</div>
+          </div>
+
+          <div class="table-row" *ngFor="let i of [1, 2, 3]">
+            <div class="data-cell"><ion-skeleton-text animated style="width: 80%"></ion-skeleton-text></div>
+            <div class="data-cell"><ion-skeleton-text animated style="width: 90%"></ion-skeleton-text></div>
+            <div class="data-cell seq-cell"><ion-skeleton-text animated style="width: 50%"></ion-skeleton-text></div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="uiState === 'empty'" class="empty-state">
+          <ion-icon name="search-outline" size="large"></ion-icon>
+          <ion-text color="medium">
+            <h3>Sin Resultados</h3>
+            <p>No se encontraron grupos que coincidan con su búsqueda.</p>
           </ion-text>
-          <!-- Mock de formulario -->
-          <ion-skeleton-text animated style="width: 100%; height: 40px; margin-bottom: 10px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 100%; height: 40px; margin-bottom: 10px;"></ion-skeleton-text>
-          <ion-skeleton-text animated style="width: 150px; height: 40px; margin-top: 20px;"></ion-skeleton-text>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="uiState === 'error'" class="error-state">
+          <ion-icon name="close-circle-outline" size="large"></ion-icon>
+          <ion-text color="danger">
+            <h3>Error de Conexión</h3>
+            <p>Ocurrió un problema al cargar los datos. Inténtelo de nuevo más tarde.</p>
+          </ion-text>
         </div>
 
       </ion-card-content>
