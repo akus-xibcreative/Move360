@@ -11,14 +11,6 @@
         debounce="500"
         class="custom-search-bar"
       ></ion-searchbar>
-      <ion-button
-        (click)="changeToViewState()"
-        fill="solid"
-        class="custom-button btn-view"
-        [disabled]="uiState === 'view'"
-      >
-        Ver
-      </ion-button>
 
       <ion-button
         (click)="changeToNewState()"
@@ -34,7 +26,6 @@
   <ion-card class="data-card">
     <ion-card-content class="data-content-area">
 
-      <!-- Ver Tabla de Usuarios  -->
       <div *ngIf="uiState === 'view'" class="table-container">
         <div class="table-header">
           <div class="header-cell">Nombre</div>
@@ -44,6 +35,7 @@
           <div class="header-cell">Grupo</div>
           <div class="header-cell">Categoría</div>
           <div class="header-cell">Celular</div>
+          <div class="header-cell">Acción</div>
         </div>
 
         <div class="table-row" *ngFor="let user of filteredUsers">
@@ -54,6 +46,23 @@
           <div class="data-cell">{{ getGroupDescription(user.group_id) }}</div>
           <div class="data-cell">{{ getCategoryDescription(user.category_id) }}</div>
           <div class="data-cell">{{ user.phone }}</div>
+          <div class="data-cell action-cell">
+            <div class="action-wrapper">
+              <button class="action-menu-btn" (click)="toggleActionMenu(user, $event)">
+                <ion-icon name="ellipsis-vertical"></ion-icon>
+              </button>
+              <div class="action-popup" *ngIf="activeMenuUserId === getUserId(user)" (click)="$event.stopPropagation()">
+                <div class="popup-option" (click)="editUser(user)">
+                  <ion-icon name="create-outline"></ion-icon>
+                  <span>Editar</span>
+                </div>
+                <div class="popup-option delete-option" (click)="confirmDelete(user)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                  <span>Eliminar</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div *ngIf="filteredUsers.length === 0" class="no-results">
@@ -63,7 +72,7 @@
         </div>
       </div>
 
-      <!-- Nuevo Usuario  -->
+      <!-- nuevo usuario  -->
       <div *ngIf="uiState === 'new'" class="form-container">
         <div class="table-header">
           <div class="header-cell">Nombre</div>
@@ -129,7 +138,68 @@
         </div>
       </div>
 
-      <!-- Skeleton Loading -->
+      <!-- editar usuario  -->
+      <div *ngIf="uiState === 'edit'" class="form-container">
+        <div class="table-header">
+          <div class="header-cell">Nombre</div>
+          <div class="header-cell">Apellidos</div>
+          <div class="header-cell">Correo</div>
+          <div class="header-cell">Grado</div>
+          <div class="header-cell">Grupo</div>
+          <div class="header-cell">Categoría</div>
+          <div class="header-cell">Celular</div>
+        </div>
+
+        <div class="table-row input-row edit-row">
+          <div class="data-cell input-cell">
+            <input type="text" [(ngModel)]="editingUser.firstName" placeholder="Nombre" class="cell-input" />
+          </div>
+          <div class="data-cell input-cell">
+            <input type="text" [(ngModel)]="editingUser.lastName" placeholder="Apellidos" class="cell-input" />
+          </div>
+          <div class="data-cell input-cell">
+            <input type="email" [(ngModel)]="editingUser.email" placeholder="Correo" class="cell-input" disabled />
+          </div>
+          <div class="data-cell input-cell">
+            <ion-button (click)="openModal('grade')" fill="clear" size="small" class="select-button">
+              {{ getGradeDescription(editingUser.grade_id) || 'Seleccionar' }}
+            </ion-button>
+          </div>
+          <div class="data-cell input-cell">
+            <ion-button (click)="openModal('group')" fill="clear" size="small" class="select-button">
+              {{ getGroupDescription(editingUser.group_id) || 'Seleccionar' }}
+            </ion-button>
+          </div>
+          <div class="data-cell input-cell">
+            <ion-button (click)="openModal('category')" fill="clear" size="small" class="select-button">
+              {{ getCategoryDescription(editingUser.category_id) || 'Seleccionar' }}
+            </ion-button>
+          </div>
+          <div class="data-cell input-cell">
+            <input type="tel" [(ngModel)]="editingUser.phone" placeholder="Celular" class="cell-input" />
+          </div>
+        </div>
+
+        <div class="bottom-actions-row">
+          <ion-button
+            (click)="changeToViewState()"
+            fill="outline"
+            color="medium"
+            class="action-button cancel-button"
+          >
+            Cancelar
+          </ion-button>
+          <ion-button
+            (click)="confirmEditUser()"
+            fill="solid"
+            color="primary"
+            class="custom-button confirm-button"
+          >
+            Confirmar
+          </ion-button>
+        </div>
+      </div>
+
       <div *ngIf="uiState === 'skeleton'" class="table-container">
         <div class="table-header">
           <div class="header-cell">Nombre</div>
@@ -152,7 +222,6 @@
         </div>
       </div>
 
-      <!-- Estado Empty -->
       <div *ngIf="uiState === 'empty'" class="empty-state">
         <ion-text color="medium">
           <ion-icon name="search-outline" size="large"></ion-icon>
@@ -161,7 +230,6 @@
         </ion-text>
       </div>
 
-      <!-- Estado Error -->
       <div *ngIf="uiState === 'error'" class="error-state">
         <ion-text color="danger">
           <ion-icon name="close-circle-outline" size="large"></ion-icon>
@@ -173,7 +241,6 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Modal Grado -->
   <ion-modal [isOpen]="isGradeModalOpen" (didDismiss)="closeModal('grade')">
     <ng-template>
       <ion-header>
@@ -194,7 +261,6 @@
     </ng-template>
   </ion-modal>
 
-  <!-- Modal Grupo -->
   <ion-modal [isOpen]="isGroupModalOpen" (didDismiss)="closeModal('group')">
     <ng-template>
       <ion-header>
@@ -215,7 +281,6 @@
     </ng-template>
   </ion-modal>
 
-  <!-- Modal Categoría -->
   <ion-modal [isOpen]="isCategoryModalOpen" (didDismiss)="closeModal('category')">
     <ng-template>
       <ion-header>
@@ -233,6 +298,39 @@
           </ion-item>
         </ion-list>
       </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- confirmar eliminación -->
+  <ion-modal [isOpen]="isDeleteModalOpen" (didDismiss)="closeDeleteModal()" class="delete-modal">
+    <ng-template>
+      <div class="delete-modal-content">
+        <div class="delete-icon-container">
+          <ion-icon name="warning-outline" color="danger"></ion-icon>
+        </div>
+        <h2>¿Eliminar usuario?</h2>
+        <p>¿Seguro que deseas eliminar este usuario?</p>
+        <p class="user-name">{{ userToDelete?.firstName }} {{ userToDelete?.lastName }}</p>
+        
+        <div class="delete-modal-actions">
+          <ion-button
+            (click)="closeDeleteModal()"
+            fill="outline"
+            color="medium"
+            class="modal-cancel-button"
+          >
+            Cancelar
+          </ion-button>
+          <ion-button
+            (click)="deleteUser()"
+            fill="solid"
+            color="danger"
+            class="modal-confirm-button"
+          >
+            Confirmar
+          </ion-button>
+        </div>
+      </div>
     </ng-template>
   </ion-modal>
 

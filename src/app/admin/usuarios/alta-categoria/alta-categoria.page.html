@@ -13,15 +13,6 @@
         ></ion-searchbar>
 
         <ion-button
-          (click)="changeToViewState()"
-          fill="solid"
-          class="custom-button btn-view"
-          [disabled]="uiState === 'view'"
-        >
-          Ver
-        </ion-button>
-
-        <ion-button
           (click)="changeToNewState()"
           fill="solid"
           class="custom-button btn-new"
@@ -94,7 +85,6 @@
       </div>
         </div>
 
-        <!-- Skeleton Loading -->
         <div *ngIf="uiState === 'skeleton'" class="table-container">
           <div class="table-header">
             <div class="header-cell">Clave</div>
@@ -109,7 +99,6 @@
           </div>
         </div>
 
-        <!-- Estado Empty -->
         <div *ngIf="uiState === 'empty'" class="empty-state">
           <ion-icon name="search-outline" size="large"></ion-icon>
           <ion-text color="medium">
@@ -118,7 +107,6 @@
           </ion-text>
         </div>
 
-        <!-- Estado Error -->
         <div *ngIf="uiState === 'error'" class="error-state">
           <ion-icon name="close-circle-outline" size="large"></ion-icon>
           <ion-text color="danger">

@@ -31,38 +31,56 @@ $menu-active-color: #4D82BC;
 
 .menu-list {
   padding: 0;
-  background-color: #fff;
+  background-color: #fdfdfd;
 
   .menu-item {
     --padding-start: 20px;
     --inner-padding-end: 20px;
     --min-height: 48px;
-    --background: #fff;
+    --background: #ffffff;
     --color: #333;
     color: #333;
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
+    transition: all 0.3s ease;
     border-radius: 0 50px 50px 0;
     margin-right: 15px;
+    margin-bottom: 4px;
 
     &:hover:not(.active) {
+      background-color: rgba(77, 130, 188, 0.1);
       color: #{$menu-active-color} !important;
-      --background-hover: transparent;
-      --background-activated: transparent;
-      background-color: transparent;
+      --color: #{$menu-active-color};
+      --background-hover: rgba(77, 130, 188, 0.1);
+      --background-activated: rgba(77, 130, 188, 0.1);
+      transform: translateX(5px);
+
+      ion-icon {
+        color: #{$menu-active-color};
+      }
+
+      ion-label {
+        color: #{$menu-active-color};
+      }
     }
+
     &.active {
-      // Menú activo: #4D82BC
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: rgba(77, 131, 188, 0.205);
       --color: #{$menu-active-color};
       color: #{$menu-active-color};
-
       font-weight: 600;
       position: relative;
 
       ion-icon {
         color: #{$menu-active-color};
       }
+    }
+
+    ion-icon {
+      transition: color 0.3s ease;
+    }
+
+    ion-label {
+      transition: color 0.3s ease;
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonText, IonButton, IonSearchbar,
@@ -6,11 +6,11 @@ import {
   IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonList, IonItem, IonLabel, IonSkeletonText, SearchbarCustomEvent, IonIcon } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { searchOutline, closeCircleOutline } from 'ionicons/icons';
+import { searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline } from 'ionicons/icons';
 import { AuthenticationService } from '../../../firebase/authentication.service';
 import { FirestoreService } from '../../../firebase/firestore.service';
 
-addIcons({ searchOutline, closeCircleOutline });
+addIcons({ searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline });
 
 @Component({
   selector: 'app-alta-usuario',
@@ -26,7 +26,7 @@ addIcons({ searchOutline, closeCircleOutline });
 })
 export class AltaUsuarioPage implements OnInit {
 
-  uiState: 'view' | 'new' | 'skeleton' | 'empty' | 'error' = 'view';
+  uiState: 'view' | 'new' | 'edit' | 'skeleton' | 'empty' | 'error' = 'view';
 
   allUsers: any[] = [];
   filteredUsers: any[] = [];
@@ -43,9 +43,25 @@ export class AltaUsuarioPage implements OnInit {
     group_id: ''
   };
 
+  editingUser: any = {
+    id: '',
+    firstName: '',
+    secondName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    category_id: '',
+    grade_id: '',
+    group_id: ''
+  };
+
   isGradeModalOpen = false;
   isGroupModalOpen = false;
   isCategoryModalOpen = false;
+  isDeleteModalOpen = false;
+
+  activeMenuUserId: string | null = null;
+  userToDelete: any = null;
 
   allGrades: any[] = [];
   allGroups: any[] = [];
@@ -55,7 +71,7 @@ export class AltaUsuarioPage implements OnInit {
     private authService: AuthenticationService,
     private firestoreService: FirestoreService
   ) {
-      addIcons({searchOutline,closeCircleOutline}); }
+      addIcons({searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline}); }
 
   async ngOnInit() {
     this.uiState = 'skeleton';
@@ -83,6 +99,7 @@ export class AltaUsuarioPage implements OnInit {
       } else {
         this.allUsers = users;
         this.filteredUsers = [...users];
+        console.log('Usuarios cargados:', users); // Para debug
         this.uiState = 'view';
       }
     } catch (error) {
@@ -252,17 +269,29 @@ export class AltaUsuarioPage implements OnInit {
   }
 
   selectGrade(grade: any) {
-    this.newUser.grade_id = grade.id;
+    if (this.uiState === 'edit') {
+      this.editingUser.grade_id = grade.id;
+    } else {
+      this.newUser.grade_id = grade.id;
+    }
     this.isGradeModalOpen = false;
   }
 
   selectGroup(group: any) {
-    this.newUser.group_id = group.id;
+    if (this.uiState === 'edit') {
+      this.editingUser.group_id = group.id;
+    } else {
+      this.newUser.group_id = group.id;
+    }
     this.isGroupModalOpen = false;
   }
 
   selectCategory(category: any) {
-    this.newUser.category_id = category.id;
+    if (this.uiState === 'edit') {
+      this.editingUser.category_id = category.id;
+    } else {
+      this.newUser.category_id = category.id;
+    }
     this.isCategoryModalOpen = false;
   }
 
@@ -288,5 +317,74 @@ export class AltaUsuarioPage implements OnInit {
     if (!groupId) return '';
     const group = this.allGroups.find(g => g.id === groupId);
     return group ? group.desc : groupId;
+  }
+
+  // Método auxiliar para obtener el ID del usuario
+  getUserId(user: any): string {
+    return user.id || user.uid || user.email; // Fallback al email si no hay id
+  }
+
+  // Cerrar menú al hacer clic fuera
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.action-wrapper') && !target.closest('.action-popup')) {
+      this.activeMenuUserId = null;
+    }
+  }
+
+  // Funciones para el menú de acciones
+  toggleActionMenu(user: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    const userId = this.getUserId(user);
+    console.log('Toggle menu para usuario:', userId, user); // Debug
+    if (this.activeMenuUserId === userId) {
+      this.activeMenuUserId = null;
+      console.log('Menú cerrado');
+    } else {
+      this.activeMenuUserId = userId;
+      console.log('Menú abierto para:', userId);
+      console.log('activeMenuUserId establecido a:', this.activeMenuUserId);
+    }
+  }
+
+  editUser(user: any) {
+    this.editingUser = {
+      id: this.getUserId(user),
+      firstName: user.firstName,
+      secondName: user.secondName || '',
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone || '',
+      category_id: user.category_id || '',
+      grade_id: user.grade_id || '',
+      group_id: user.group_id || ''
+    };
+    this.uiState = 'edit';
+    this.activeMenuUserId = null;
+  }
+
+  confirmEditUser() {
+    // Esta función será implementada por el backend
+    console.log('Editar usuario:', this.editingUser);
+  }
+
+  confirmDelete(user: any) {
+    this.userToDelete = user;
+    this.isDeleteModalOpen = true;
+    this.activeMenuUserId = null;
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.userToDelete = null;
+  }
+
+  deleteUser() {
+    // Esta función será implementada por el backend
+    console.log('Eliminar usuario:', this.userToDelete);
+    this.closeDeleteModal();
   }
 }
