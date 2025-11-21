@@ -33,12 +33,33 @@
             <div class="header-cell">Clave</div>
             <div class="header-cell">Descripción</div>
             <div class="header-cell seq-cell">Secuencia</div>
+            <div class="header-cell">Acción</div>
           </div>
 
-          <div class="table-row" *ngFor="let group of filteredGroups">
+          <div class="table-row" *ngFor="let group of filteredGroups; let i = index">
             <div class="data-cell">{{ group.id }}</div>
             <div class="data-cell">{{ group.desc }}</div>
             <div class="data-cell seq-cell">{{ group.seq }}</div>
+            <div class="data-cell action-cell">
+              <div class="action-wrapper">
+                <button class="action-menu-btn" (click)="toggleActionMenu(group, $event)">
+                  <ion-icon name="ellipsis-vertical"></ion-icon>
+                </button>
+                <div class="action-popup" 
+                     *ngIf="activeMenuId === getGroupId(group)" 
+                     [class.popup-up]="isLastRows(i)"
+                     (click)="$event.stopPropagation()">
+                  <div class="popup-option" (click)="editGroup(group)">
+                    <ion-icon name="create-outline"></ion-icon>
+                    <span>Editar</span>
+                  </div>
+                  <div class="popup-option delete-option" (click)="confirmDelete(group)">
+                    <ion-icon name="trash-outline"></ion-icon>
+                    <span>Eliminar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div *ngIf="filteredGroups.length === 0" class="no-results">
@@ -86,9 +107,49 @@
           Confirmar
         </ion-button>
       </div>
-        </div>
+    </div>
 
-        <div *ngIf="uiState === 'skeleton'" class="table-container">
+    <!-- Modo Editar Grupo -->
+    <div *ngIf="uiState === 'edit'" class="form-container">
+      <div class="table-header">
+        <div class="header-cell">Clave</div>
+        <div class="header-cell">Descripción</div>
+        <div class="header-cell seq-cell">Secuencia</div>
+      </div>
+
+      <div class="table-row input-row">
+        <div class="data-cell input-cell">
+          <input type="text" [(ngModel)]="editingGroup.id" placeholder="Clave" class="cell-input" disabled/>
+        </div>
+        <div class="data-cell input-cell">
+          <input type="text" [(ngModel)]="editingGroup.desc" placeholder="Descripción" class="cell-input"/>
+        </div>
+        <div class="data-cell seq-cell input-cell">
+          <input type="text" inputmode="numeric" [(ngModel)]="editingGroup.seq" (input)="onlyNumbers($event)" placeholder="Secuencia" class="cell-input"/>
+        </div>
+      </div>
+
+      <div class="bottom-actions-row">
+        <ion-button
+          (click)="changeToViewState()"
+          fill="outline"
+          color="medium"
+          class="action-button cancel-button"
+        >
+          Cancelar
+        </ion-button>
+        <ion-button
+          (click)="confirmEditGroup()"
+          fill="solid"
+          color="primary"
+          class="custom-button confirm-button"
+        >
+          Confirmar
+        </ion-button>
+      </div>
+    </div>
+
+    <div *ngIf="uiState === 'skeleton'" class="table-container">
           <div class="table-header">
             <div class="header-cell">Clave</div>
             <div class="header-cell">Descripción</div>
@@ -120,5 +181,37 @@
 
       </ion-card-content>
     </ion-card>
+
+    <!-- Modal de confirmación de eliminación -->
+    <ion-modal [isOpen]="isDeleteModalOpen" (didDismiss)="closeDeleteModal()" class="delete-modal">
+      <ng-template>
+        <div class="delete-modal-content">
+          <div class="delete-icon-container">
+            <ion-icon name="warning-outline" color="danger"></ion-icon>
+          </div>
+          <h2>¿Eliminar Grupo?</h2>
+          <p>¿Está seguro de que desea eliminar el grupo <strong class="item-name">{{ itemToDelete?.desc }}</strong>?</p>
+          <p class="warning-text">Esta acción no se puede deshacer.</p>
+          <div class="delete-modal-actions">
+            <ion-button
+              (click)="closeDeleteModal()"
+              fill="outline"
+              color="medium"
+              class="modal-cancel-button"
+            >
+              Cancelar
+            </ion-button>
+            <ion-button
+              (click)="deleteItem()"
+              fill="solid"
+              color="danger"
+              class="modal-confirm-button"
+            >
+              Eliminar
+            </ion-button>
+          </div>
+        </div>
+      </ng-template>
+    </ion-modal>
 
 </div>

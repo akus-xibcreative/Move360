@@ -31,12 +31,33 @@
             <div class="header-cell">Clave</div>
             <div class="header-cell">Descripción</div>
             <div class="header-cell seq-cell">Secuencia</div>
+            <div class="header-cell">Acción</div>
           </div>
 
-          <div class="table-row" *ngFor="let category of filteredCategories">
+          <div class="table-row" *ngFor="let category of filteredCategories; let i = index">
             <div class="data-cell">{{ category.id }}</div>
             <div class="data-cell">{{ category.desc }}</div>
             <div class="data-cell seq-cell">{{ category.seq }}</div>
+            <div class="data-cell action-cell">
+              <div class="action-wrapper">
+                <button class="action-menu-btn" (click)="toggleActionMenu(category, $event)">
+                  <ion-icon name="ellipsis-vertical"></ion-icon>
+                </button>
+                <div class="action-popup" 
+                     *ngIf="activeMenuId === getCategoryId(category)" 
+                     [class.popup-up]="isLastRows(i)"
+                     (click)="$event.stopPropagation()">
+                  <div class="popup-option" (click)="editCategory(category)">
+                    <ion-icon name="create-outline"></ion-icon>
+                    <span>Editar</span>
+                  </div>
+                  <div class="popup-option delete-option" (click)="confirmDelete(category)">
+                    <ion-icon name="trash-outline"></ion-icon>
+                    <span>Eliminar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div *ngIf="filteredCategories.length === 0" class="no-results">
@@ -85,6 +106,46 @@
       </div>
         </div>
 
+        <!-- Editar Categoría  -->
+        <div *ngIf="uiState === 'edit'" class="form-container">
+          <div class="table-header">
+            <div class="header-cell">Clave</div>
+            <div class="header-cell">Descripción</div>
+            <div class="header-cell seq-cell">Secuencia</div>
+          </div>
+
+          <div class="table-row input-row">
+            <div class="data-cell input-cell">
+              <input type="text" [(ngModel)]="editingCategory.id" placeholder="Clave" class="cell-input" disabled/>
+            </div>
+            <div class="data-cell input-cell">
+              <input type="text" [(ngModel)]="editingCategory.desc" placeholder="Descripción" class="cell-input"/>
+            </div>
+            <div class="data-cell seq-cell input-cell">
+              <input type="text" inputmode="numeric" [(ngModel)]="editingCategory.seq" (input)="onlyNumbers($event)" placeholder="Secuencia" class="cell-input"/>
+            </div>
+          </div>
+
+           <div class="bottom-actions-row">
+            <ion-button
+            (click)="changeToViewState()"
+            fill="outline"
+            color="medium"
+            class="action-button cancel-button"
+            >
+            Cancelar
+          </ion-button>
+          <ion-button
+          (click)="confirmEditCategory()"
+          fill="solid"
+          color="primary"
+          class="custom-button confirm-button"
+          >
+          Confirmar
+        </ion-button>
+      </div>
+        </div>
+
         <div *ngIf="uiState === 'skeleton'" class="table-container">
           <div class="table-header">
             <div class="header-cell">Clave</div>
@@ -117,5 +178,38 @@
 
       </ion-card-content>
     </ion-card>
+
+    <!-- Modal Confirmar Eliminación -->
+    <ion-modal [isOpen]="isDeleteModalOpen" (didDismiss)="closeDeleteModal()" class="delete-modal">
+      <ng-template>
+        <div class="delete-modal-content">
+          <div class="delete-icon-container">
+            <ion-icon name="warning-outline" color="danger"></ion-icon>
+          </div>
+          <h2>¿Eliminar categoría?</h2>
+          <p>¿Seguro que deseas eliminar esta categoría?</p>
+          <p class="item-name">{{ itemToDelete?.id }} - {{ itemToDelete?.desc }}</p>
+          
+          <div class="delete-modal-actions">
+            <ion-button
+              (click)="closeDeleteModal()"
+              fill="outline"
+              color="medium"
+              class="modal-cancel-button"
+            >
+              Cancelar
+            </ion-button>
+            <ion-button
+              (click)="deleteItem()"
+              fill="solid"
+              color="danger"
+              class="modal-confirm-button"
+            >
+              Confirmar
+            </ion-button>
+          </div>
+        </div>
+      </ng-template>
+    </ion-modal>
 
 </div>

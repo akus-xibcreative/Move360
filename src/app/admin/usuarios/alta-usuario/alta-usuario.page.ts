@@ -324,6 +324,11 @@ export class AltaUsuarioPage implements OnInit {
     return user.id || user.uid || user.email; // Fallback al email si no hay id
   }
 
+  // Verificar si es una de las últimas 2 filas
+  isLastRows(index: number): boolean {
+    return index >= this.filteredUsers.length - 2;
+  }
+
   // Cerrar menú al hacer clic fuera
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {

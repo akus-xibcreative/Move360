@@ -38,7 +38,7 @@
           <div class="header-cell">Acción</div>
         </div>
 
-        <div class="table-row" *ngFor="let user of filteredUsers">
+        <div class="table-row" *ngFor="let user of filteredUsers; let i = index">
           <div class="data-cell">{{ user.firstName }}</div>
           <div class="data-cell">{{ user.lastName }}</div>
           <div class="data-cell">{{ user.email }}</div>
@@ -51,7 +51,10 @@
               <button class="action-menu-btn" (click)="toggleActionMenu(user, $event)">
                 <ion-icon name="ellipsis-vertical"></ion-icon>
               </button>
-              <div class="action-popup" *ngIf="activeMenuUserId === getUserId(user)" (click)="$event.stopPropagation()">
+              <div class="action-popup" 
+                   *ngIf="activeMenuUserId === getUserId(user)" 
+                   [class.popup-up]="isLastRows(i)"
+                   (click)="$event.stopPropagation()">
                 <div class="popup-option" (click)="editUser(user)">
                   <ion-icon name="create-outline"></ion-icon>
                   <span>Editar</span>
@@ -138,8 +141,8 @@
         </div>
       </div>
 
-      <!-- editar usuario  -->
-      <div *ngIf="uiState === 'edit'" class="form-container">
+      <!-- Editar Usuario  -->
+      <div *ngIf="uiState === 'edit'" class="form-container edit-mode">
         <div class="table-header">
           <div class="header-cell">Nombre</div>
           <div class="header-cell">Apellidos</div>

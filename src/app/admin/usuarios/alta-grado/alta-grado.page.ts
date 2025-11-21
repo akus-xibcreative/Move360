@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {IonText, IonButton, IonSearchbar,
 IonCard, IonCardContent,
-IonSkeletonText, IonIcon, SearchbarCustomEvent } from '@ionic/angular/standalone';
+IonSkeletonText, IonIcon, IonModal, SearchbarCustomEvent } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { searchOutline, closeCircleOutline } from 'ionicons/icons';
+import { searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline } from 'ionicons/icons';
 import { FirestoreService } from '../../../firebase/firestore.service';
 
-addIcons({ searchOutline, closeCircleOutline });
+addIcons({ searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline });
 
 @Component({
   selector: 'app-alta-grado',
@@ -18,12 +18,12 @@ addIcons({ searchOutline, closeCircleOutline });
   imports: [
     CommonModule, FormsModule,
     IonText, IonButton, IonSearchbar,
-    IonCard, IonCardContent, IonSkeletonText, IonIcon
+    IonCard, IonCardContent, IonSkeletonText, IonIcon, IonModal
   ]
 })
 export class AltaGradoPage implements OnInit {
 
-  uiState: 'view' | 'new' | 'skeleton' | 'empty' | 'error' = 'skeleton';
+  uiState: 'view' | 'new' | 'edit' | 'skeleton' | 'empty' | 'error' = 'skeleton';
 
   allGrades: any[] = [];
   filteredGrades: any[] = [];
@@ -34,8 +34,19 @@ export class AltaGradoPage implements OnInit {
     seq: null
   };
 
+  activeMenuId: string | null = null;
+
+  editingGrade: any = {
+    id: '',
+    desc: '',
+    seq: null
+  };
+
+  isDeleteModalOpen = false;
+  itemToDelete: any = null;
+
   constructor(private firestoreService: FirestoreService) {
-      addIcons({searchOutline,closeCircleOutline});
+      addIcons({searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline});
 
   }
 
@@ -126,5 +137,67 @@ export class AltaGradoPage implements OnInit {
   onlyNumbers(event: any) {
     event.target.value = event.target.value.replace(/[^0-9]/g, '');
     this.newGrade.seq = event.target.value;
+  }
+
+  // Funciones para el menú de acciones
+  getGradeId(grade: any): string {
+    return grade.id || grade.desc;
+  }
+
+  isLastRows(index: number): boolean {
+    return index >= this.filteredGrades.length - 2;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.action-wrapper') && !target.closest('.action-popup')) {
+      this.activeMenuId = null;
+    }
+  }
+
+  toggleActionMenu(grade: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    const gradeId = this.getGradeId(grade);
+    if (this.activeMenuId === gradeId) {
+      this.activeMenuId = null;
+    } else {
+      this.activeMenuId = gradeId;
+    }
+  }
+
+  editGrade(grade: any) {
+    this.editingGrade = {
+      id: grade.id,
+      desc: grade.desc,
+      seq: grade.seq
+    };
+    this.uiState = 'edit';
+    this.activeMenuId = null;
+  }
+
+  confirmEditGrade() {
+    console.log('Confirmar edición de grado:', this.editingGrade);
+    alert('Función de edición pendiente de implementar por el backend');
+    this.changeToViewState();
+  }
+
+  confirmDelete(grade: any) {
+    this.itemToDelete = grade;
+    this.isDeleteModalOpen = true;
+    this.activeMenuId = null;
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.itemToDelete = null;
+  }
+
+  deleteItem() {
+    console.log('Eliminar grado:', this.itemToDelete);
+    alert('Función de eliminación pendiente de implementar por el backend');
+    this.closeDeleteModal();
   }
 }

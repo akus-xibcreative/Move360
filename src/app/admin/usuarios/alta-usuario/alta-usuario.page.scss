@@ -126,6 +126,7 @@ ion-card-content {
 }
 
 .form-container {
+  // Grid para modo "nuevo" con 8 columnas (incluye contraseña)
   .table-header {
     grid-template-columns: 0.8fr 0.8fr 1.0fr 0.9fr 0.65fr 0.65fr 0.9fr 0.7fr;
   }
@@ -137,8 +138,15 @@ ion-card-content {
     grid-template-columns: 0.8fr 0.8fr 1.0fr 0.9fr 0.65fr 0.65fr 0.9fr 0.7fr;
   }
 
-  .edit-row {
-    grid-template-columns: 0.9fr 0.9fr 1.2fr 0.7fr 0.7fr 1fr 0.8fr;
+  // Grid para modo "editar" con 7 columnas (sin contraseña)
+  &.edit-mode {
+    .table-header {
+      grid-template-columns: 0.9fr 0.9fr 1.3fr 0.8fr 0.8fr 1.1fr 0.8fr;
+    }
+
+    .edit-row {
+      grid-template-columns: 0.9fr 0.9fr 1.3fr 0.8fr 0.8fr 1.1fr 0.8fr;
+    }
   }
 
   .input-cell {
@@ -294,6 +302,12 @@ ion-card-content {
   min-width: 160px;
   overflow: visible;
   display: block !important;
+
+  // Popup que se abre hacia arriba para las últimas filas
+  &.popup-up {
+    top: auto;
+    bottom: calc(100% - 5px);
+  }
 }
 
 .popup-option {

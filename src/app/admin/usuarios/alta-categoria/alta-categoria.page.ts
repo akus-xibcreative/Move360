@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonText, IonButton, IonSearchbar,
   IonCard, IonCardContent,
-  IonSkeletonText, IonIcon, SearchbarCustomEvent } from '@ionic/angular/standalone';
+  IonSkeletonText, IonIcon, SearchbarCustomEvent, IonModal } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { searchOutline, closeCircleOutline } from 'ionicons/icons';
+import { searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline } from 'ionicons/icons';
 import { FirestoreService } from '../../../firebase/firestore.service';
 
-addIcons({ searchOutline, closeCircleOutline });
+addIcons({ searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline });
 
 @Component({
   selector: 'app-alta-categoria-usuario',
@@ -19,12 +19,13 @@ addIcons({ searchOutline, closeCircleOutline });
   imports: [
     CommonModule, FormsModule,
     IonText, IonButton, IonSearchbar,
-    IonCard, IonCardContent, IonSkeletonText, IonIcon
+    IonCard, IonCardContent, IonSkeletonText, IonIcon,
+    IonModal
   ]
 })
 export class AltaCategoriaPage implements OnInit {
 
-  uiState: 'view' | 'new' | 'skeleton' | 'empty' | 'error' = 'skeleton';
+  uiState: 'view' | 'new' | 'edit' | 'skeleton' | 'empty' | 'error' = 'skeleton';
 
   allCategories: any[] = [];
   filteredCategories: any[] = [];
@@ -35,8 +36,18 @@ export class AltaCategoriaPage implements OnInit {
     seq: null
   };
 
+  editingCategory: any = {
+    id: '',
+    desc: '',
+    seq: null
+  };
+
+  activeMenuId: string | null = null;
+  isDeleteModalOpen = false;
+  itemToDelete: any = null;
+
   constructor(private firestoreService: FirestoreService) {
-      addIcons({searchOutline,closeCircleOutline}); }
+      addIcons({searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline}); }
 
   async ngOnInit() {
     await this.loadCategories();
@@ -125,5 +136,69 @@ export class AltaCategoriaPage implements OnInit {
   onlyNumbers(event: any) {
     event.target.value = event.target.value.replace(/[^0-9]/g, '');
     this.newCategory.seq = event.target.value;
+  }
+
+  // Funciones para el menú de acciones
+  getCategoryId(category: any): string {
+    return category.id || category.desc;
+  }
+
+  isLastRows(index: number): boolean {
+    return index >= this.filteredCategories.length - 2;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.action-wrapper') && !target.closest('.action-popup')) {
+      this.activeMenuId = null;
+    }
+  }
+
+  toggleActionMenu(category: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    const categoryId = this.getCategoryId(category);
+    if (this.activeMenuId === categoryId) {
+      this.activeMenuId = null;
+    } else {
+      this.activeMenuId = categoryId;
+    }
+  }
+
+  editCategory(category: any) {
+    this.editingCategory = {
+      id: category.id,
+      desc: category.desc,
+      seq: category.seq
+    };
+    this.uiState = 'edit';
+    this.activeMenuId = null;
+  }
+
+  confirmEditCategory() {
+    console.log('Confirmar edición de categoría:', this.editingCategory);
+    // Esta función será implementada por el backend
+    alert('Función de edición pendiente de implementar por el backend');
+    this.changeToViewState();
+  }
+
+  confirmDelete(category: any) {
+    this.itemToDelete = category;
+    this.isDeleteModalOpen = true;
+    this.activeMenuId = null;
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.itemToDelete = null;
+  }
+
+  deleteItem() {
+    console.log('Eliminar categoría:', this.itemToDelete);
+    // Esta función será implementada por el backend
+    alert('Función de eliminación pendiente de implementar por el backend');
+    this.closeDeleteModal();
   }
 }

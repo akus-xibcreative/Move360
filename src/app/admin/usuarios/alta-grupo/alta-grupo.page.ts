@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonText, IonButton, IonSearchbar,
   IonCard, IonCardContent,
-  IonSkeletonText, IonIcon, SearchbarCustomEvent} from '@ionic/angular/standalone';
+  IonSkeletonText, IonIcon, IonModal, SearchbarCustomEvent} from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { searchOutline, closeCircleOutline } from 'ionicons/icons';
+import { searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline } from 'ionicons/icons';
 import { FirestoreService } from '../../../firebase/firestore.service';
 
-addIcons({ searchOutline, closeCircleOutline });
+addIcons({ searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline });
 
 @Component({
   selector: 'app-alta-grupo',
@@ -19,12 +19,12 @@ addIcons({ searchOutline, closeCircleOutline });
   imports: [
     CommonModule, FormsModule,
     IonText, IonButton, IonSearchbar,
-    IonCard, IonCardContent, IonSkeletonText, IonIcon
+    IonCard, IonCardContent, IonSkeletonText, IonIcon, IonModal
   ]
 })
 export class AltaGrupoPage implements OnInit {
 
-  uiState: 'view' | 'new' | 'skeleton' | 'empty' | 'error' = 'skeleton';
+  uiState: 'view' | 'new' | 'edit' | 'skeleton' | 'empty' | 'error' = 'skeleton';
 
   allGroups: any[] = [];
   filteredGroups: any[] = [];
@@ -35,8 +35,19 @@ export class AltaGrupoPage implements OnInit {
     seq: null
   };
 
+  activeMenuId: string | null = null;
+
+  editingGroup: any = {
+    id: '',
+    desc: '',
+    seq: null
+  };
+
+  isDeleteModalOpen = false;
+  itemToDelete: any = null;
+
   constructor(private firestoreService: FirestoreService) {
-      addIcons({searchOutline,closeCircleOutline}); }
+      addIcons({searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline}); }
 
   async ngOnInit() {
     await this.loadGroups();
@@ -125,5 +136,67 @@ export class AltaGrupoPage implements OnInit {
   onlyNumbers(event: any) {
     event.target.value = event.target.value.replace(/[^0-9]/g, '');
     this.newGroup.seq = event.target.value;
+  }
+
+  // Funciones para el menú de acciones
+  getGroupId(group: any): string {
+    return group.id || group.desc;
+  }
+
+  isLastRows(index: number): boolean {
+    return index >= this.filteredGroups.length - 2;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.action-wrapper') && !target.closest('.action-popup')) {
+      this.activeMenuId = null;
+    }
+  }
+
+  toggleActionMenu(group: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    const groupId = this.getGroupId(group);
+    if (this.activeMenuId === groupId) {
+      this.activeMenuId = null;
+    } else {
+      this.activeMenuId = groupId;
+    }
+  }
+
+  editGroup(group: any) {
+    this.editingGroup = {
+      id: group.id,
+      desc: group.desc,
+      seq: group.seq
+    };
+    this.uiState = 'edit';
+    this.activeMenuId = null;
+  }
+
+  confirmEditGroup() {
+    console.log('Confirmar edición de grupo:', this.editingGroup);
+    alert('Función de edición pendiente de implementar por el backend');
+    this.changeToViewState();
+  }
+
+  confirmDelete(group: any) {
+    this.itemToDelete = group;
+    this.isDeleteModalOpen = true;
+    this.activeMenuId = null;
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.itemToDelete = null;
+  }
+
+  deleteItem() {
+    console.log('Eliminar grupo:', this.itemToDelete);
+    alert('Función de eliminación pendiente de implementar por el backend');
+    this.closeDeleteModal();
   }
 }
