@@ -45,8 +45,8 @@
                 <button class="action-menu-btn" (click)="toggleActionMenu(group, $event)">
                   <ion-icon name="ellipsis-vertical"></ion-icon>
                 </button>
-                <div class="action-popup" 
-                     *ngIf="activeMenuId === getGroupId(group)" 
+                <div class="action-popup"
+                     *ngIf="activeMenuId === getGroupId(group)"
                      [class.popup-up]="isLastRows(i)"
                      (click)="$event.stopPropagation()">
                   <div class="popup-option" (click)="editGroup(group)">
@@ -190,8 +190,8 @@
             <ion-icon name="warning-outline" color="danger"></ion-icon>
           </div>
           <h2>¿Eliminar Grupo?</h2>
-          <p>¿Está seguro de que desea eliminar el grupo <strong class="item-name">{{ itemToDelete?.desc }}</strong>?</p>
-          <p class="warning-text">Esta acción no se puede deshacer.</p>
+          <p>¿Está seguro de que desea eliminar este grupo?</p>
+          <strong class="item-name">{{ itemToDelete?.desc }}</strong>
           <div class="delete-modal-actions">
             <ion-button
               (click)="closeDeleteModal()"

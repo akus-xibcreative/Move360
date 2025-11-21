@@ -177,11 +177,37 @@ export class AltaCategoriaPage implements OnInit {
     this.activeMenuId = null;
   }
 
-  confirmEditCategory() {
-    console.log('Confirmar edición de categoría:', this.editingCategory);
-    // Esta función será implementada por el backend
-    alert('Función de edición pendiente de implementar por el backend');
-    this.changeToViewState();
+  async confirmEditCategory() {
+    try {
+      if (!this.editingCategory.desc || !this.editingCategory.seq) {
+        alert('Por favor, complete todos los campos');
+        return;
+      }
+
+      if (this.editingCategory.seq < 1) {
+        alert('La secuencia debe ser un número positivo');
+        return;
+      }
+
+      this.uiState = 'skeleton';
+
+      const categoryData = {
+        desc: this.editingCategory.desc,
+        seq: Number(this.editingCategory.seq)
+      };
+
+      await this.firestoreService.updateCategory(this.editingCategory.id, categoryData);
+
+      console.log('Category updated successfully');
+      alert('Categoría actualizada exitosamente');
+
+      await this.loadCategories();
+      this.uiState = 'view';
+    } catch (error: any) {
+      console.error('Error updating category:', error);
+      this.uiState = 'edit';
+      alert('Error al actualizar categoría: ' + error.message);
+    }
   }
 
   confirmDelete(category: any) {
@@ -195,10 +221,30 @@ export class AltaCategoriaPage implements OnInit {
     this.itemToDelete = null;
   }
 
-  deleteItem() {
-    console.log('Eliminar categoría:', this.itemToDelete);
-    // Esta función será implementada por el backend
-    alert('Función de eliminación pendiente de implementar por el backend');
-    this.closeDeleteModal();
+  async deleteItem() {
+    try {
+      if (!this.itemToDelete) {
+        alert('Error: No se puede identificar la categoría a eliminar');
+        this.closeDeleteModal();
+        return;
+      }
+
+      const categoryId = this.getCategoryId(this.itemToDelete);
+      console.log('Deleting category:', categoryId);
+
+      this.closeDeleteModal();
+      this.uiState = 'skeleton';
+
+      await this.firestoreService.deleteCategory(categoryId);
+
+      console.log('Category deleted successfully');
+      alert('Categoría eliminada exitosamente');
+
+      await this.loadCategories();
+    } catch (error: any) {
+      console.error('Error deleting category:', error);
+      this.uiState = 'view';
+      alert('Error al eliminar categoría: ' + error.message);
+    }
   }
 }

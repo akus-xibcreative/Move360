@@ -45,8 +45,8 @@
                 <button class="action-menu-btn" (click)="toggleActionMenu(grade, $event)">
                   <ion-icon name="ellipsis-vertical"></ion-icon>
                 </button>
-                <div class="action-popup" 
-                     *ngIf="activeMenuId === getGradeId(grade)" 
+                <div class="action-popup"
+                     *ngIf="activeMenuId === getGradeId(grade)"
                      [class.popup-up]="isLastRows(i)"
                      (click)="$event.stopPropagation()">
                   <div class="popup-option" (click)="editGrade(grade)">
@@ -190,8 +190,8 @@
         <ion-icon name="warning-outline" color="danger"></ion-icon>
       </div>
       <h2>¿Eliminar Grado?</h2>
-      <p>¿Está seguro de que desea eliminar el grado <strong class="item-name">{{ itemToDelete?.desc }}</strong>?</p>
-      <p class="warning-text">Esta acción no se puede deshacer.</p>
+      <p>¿Está seguro de que desea eliminar este grado?</p>
+      <strong class="item-name">{{ itemToDelete?.desc }}</strong>
       <div class="delete-modal-actions">
         <ion-button
           (click)="closeDeleteModal()"

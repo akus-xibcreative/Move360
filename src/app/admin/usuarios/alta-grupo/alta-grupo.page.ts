@@ -177,10 +177,37 @@ export class AltaGrupoPage implements OnInit {
     this.activeMenuId = null;
   }
 
-  confirmEditGroup() {
-    console.log('Confirmar edición de grupo:', this.editingGroup);
-    alert('Función de edición pendiente de implementar por el backend');
-    this.changeToViewState();
+  async confirmEditGroup() {
+    try {
+      if (!this.editingGroup.desc || !this.editingGroup.seq) {
+        alert('Por favor, complete todos los campos');
+        return;
+      }
+
+      if (this.editingGroup.seq < 1) {
+        alert('La secuencia debe ser un número positivo');
+        return;
+      }
+
+      this.uiState = 'skeleton';
+
+      const groupData = {
+        desc: this.editingGroup.desc,
+        seq: Number(this.editingGroup.seq)
+      };
+
+      await this.firestoreService.updateGroup(this.editingGroup.id, groupData);
+
+      console.log('Group updated successfully');
+      alert('Grupo actualizado exitosamente');
+
+      await this.loadGroups();
+      this.uiState = 'view';
+    } catch (error: any) {
+      console.error('Error updating group:', error);
+      this.uiState = 'edit';
+      alert('Error al actualizar grupo: ' + error.message);
+    }
   }
 
   confirmDelete(group: any) {
@@ -194,9 +221,30 @@ export class AltaGrupoPage implements OnInit {
     this.itemToDelete = null;
   }
 
-  deleteItem() {
-    console.log('Eliminar grupo:', this.itemToDelete);
-    alert('Función de eliminación pendiente de implementar por el backend');
-    this.closeDeleteModal();
+  async deleteItem() {
+    try {
+      if (!this.itemToDelete) {
+        alert('Error: No se puede identificar el grupo a eliminar');
+        this.closeDeleteModal();
+        return;
+      }
+
+      const groupId = this.getGroupId(this.itemToDelete);
+      console.log('Deleting group:', groupId);
+
+      this.closeDeleteModal();
+      this.uiState = 'skeleton';
+
+      await this.firestoreService.deleteGroup(groupId);
+
+      console.log('Group deleted successfully');
+      alert('Grupo eliminado exitosamente');
+
+      await this.loadGroups();
+    } catch (error: any) {
+      console.error('Error deleting group:', error);
+      this.uiState = 'view';
+      alert('Error al eliminar grupo: ' + error.message);
+    }
   }
 }

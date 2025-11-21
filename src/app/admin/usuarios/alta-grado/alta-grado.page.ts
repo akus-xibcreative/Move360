@@ -178,10 +178,37 @@ export class AltaGradoPage implements OnInit {
     this.activeMenuId = null;
   }
 
-  confirmEditGrade() {
-    console.log('Confirmar edición de grado:', this.editingGrade);
-    alert('Función de edición pendiente de implementar por el backend');
-    this.changeToViewState();
+  async confirmEditGrade() {
+    try {
+      if (!this.editingGrade.desc || !this.editingGrade.seq) {
+        alert('Por favor, complete todos los campos');
+        return;
+      }
+
+      if (this.editingGrade.seq < 1) {
+        alert('La secuencia debe ser un número positivo');
+        return;
+      }
+
+      this.uiState = 'skeleton';
+
+      const gradeData = {
+        desc: this.editingGrade.desc,
+        seq: Number(this.editingGrade.seq)
+      };
+
+      await this.firestoreService.updateGrade(this.editingGrade.id, gradeData);
+
+      console.log('Grade updated successfully');
+      alert('Grado actualizado exitosamente');
+
+      await this.loadGrades();
+      this.uiState = 'view';
+    } catch (error: any) {
+      console.error('Error updating grade:', error);
+      this.uiState = 'edit';
+      alert('Error al actualizar grado: ' + error.message);
+    }
   }
 
   confirmDelete(grade: any) {
@@ -195,9 +222,30 @@ export class AltaGradoPage implements OnInit {
     this.itemToDelete = null;
   }
 
-  deleteItem() {
-    console.log('Eliminar grado:', this.itemToDelete);
-    alert('Función de eliminación pendiente de implementar por el backend');
-    this.closeDeleteModal();
+  async deleteItem() {
+    try {
+      if (!this.itemToDelete) {
+        alert('Error: No se puede identificar el grado a eliminar');
+        this.closeDeleteModal();
+        return;
+      }
+
+      const gradeId = this.getGradeId(this.itemToDelete);
+      console.log('Deleting grade:', gradeId);
+
+      this.closeDeleteModal();
+      this.uiState = 'skeleton';
+
+      await this.firestoreService.deleteGrade(gradeId);
+
+      console.log('Grade deleted successfully');
+      alert('Grado eliminado exitosamente');
+
+      await this.loadGrades();
+    } catch (error: any) {
+      console.error('Error deleting grade:', error);
+      this.uiState = 'view';
+      alert('Error al eliminar grado: ' + error.message);
+    }
   }
 }

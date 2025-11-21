@@ -322,7 +322,7 @@ ion-card-content {
   color: $text-dark;
   background: white;
   white-space: nowrap;
-  
+
   &:first-child {
     border-radius: 8px 8px 0 0;
   }
@@ -362,6 +362,7 @@ ion-card-content {
 .delete-modal-content {
   padding: 30px;
   text-align: center;
+  background-color: #fff;
 
   .delete-icon-container {
     margin-bottom: 20px;

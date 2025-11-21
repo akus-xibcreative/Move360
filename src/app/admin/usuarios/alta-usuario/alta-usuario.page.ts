@@ -321,7 +321,7 @@ export class AltaUsuarioPage implements OnInit {
 
   // Método auxiliar para obtener el ID del usuario
   getUserId(user: any): string {
-    return user.id || user.uid || user.email; // Fallback al email si no hay id
+    return user.id || user.uid || user.email; 
   }
 
   // Verificar si es una de las últimas 2 filas
@@ -371,9 +371,64 @@ export class AltaUsuarioPage implements OnInit {
     this.activeMenuUserId = null;
   }
 
-  confirmEditUser() {
-    // Esta función será implementada por el backend
-    console.log('Editar usuario:', this.editingUser);
+  async confirmEditUser() {
+    try {
+      if (!this.editingUser.firstName || !this.editingUser.lastName) {
+        alert('Por favor, ingrese nombre y apellido');
+        return;
+      }
+
+      if (!this.editingUser.id) {
+        alert('Error: No se puede identificar el usuario a actualizar');
+        return;
+      }
+
+      console.log('Updating user:', this.editingUser);
+
+      this.uiState = 'skeleton';
+
+      const adminUser = this.authService.getCurrentUser();
+      const adminUid = adminUser?.uid || 'admin';
+
+      let updatedByName = 'admin';
+      if (adminUid !== 'admin') {
+        const adminData = await this.firestoreService.getUserData(adminUid);
+        if (adminData) {
+          updatedByName = `${adminData['firstName']} ${adminData['lastName']}`;
+        }
+      }
+
+      const timestamp = new Date();
+
+      const userData = {
+        firstName: this.editingUser.firstName,
+        secondName: this.editingUser.secondName || '',
+        lastName: this.editingUser.lastName,
+        phone: this.editingUser.phone || '',
+        category_id: this.editingUser.category_id || '',
+        grade_id: this.editingUser.grade_id || '',
+        group_id: this.editingUser.group_id || '',
+        metadata: {
+          updated_at: timestamp,
+          updated_by: updatedByName
+        }
+      };
+
+      await this.firestoreService.updateUser(
+        this.editingUser.id,
+        userData
+      );
+
+      console.log('User updated successfully');
+      alert('Usuario actualizado exitosamente');
+
+      await this.loadUsers();
+      this.uiState = 'view';
+    } catch (error: any) {
+      console.error('Error updating user:', error);
+      this.uiState = 'edit';
+      alert('Error al actualizar usuario: ' + error.message);
+    }
   }
 
   confirmDelete(user: any) {
@@ -387,9 +442,30 @@ export class AltaUsuarioPage implements OnInit {
     this.userToDelete = null;
   }
 
-  deleteUser() {
-    // Esta función será implementada por el backend
-    console.log('Eliminar usuario:', this.userToDelete);
-    this.closeDeleteModal();
+  async deleteUser() {
+    try {
+      if (!this.userToDelete) {
+        alert('Error: No se puede identificar el usuario a eliminar');
+        this.closeDeleteModal();
+        return;
+      }
+
+      const userId = this.getUserId(this.userToDelete);
+      console.log('Deleting user permanently:', userId, this.userToDelete);
+
+      this.closeDeleteModal();
+      this.uiState = 'skeleton';
+
+      await this.firestoreService.deleteUser(userId);
+
+      console.log('User deleted permanently from database');
+      alert('Usuario eliminado exitosamente');
+
+      await this.loadUsers();
+    } catch (error: any) {
+      console.error('Error deleting user:', error);
+      this.uiState = 'view';
+      alert('Error al eliminar usuario: ' + error.message);
+    }
   }
 }
