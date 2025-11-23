@@ -1,0 +1,220 @@
+<div class="tutor-container">
+  <div class="header-actions">
+    <ion-text color="dark">
+      <h2 class="page-title">Tutores</h2>
+    </ion-text>
+
+    <div class="actions-row">
+      <ion-searchbar
+        (ionInput)="onSearchChange($event)"
+        placeholder="Buscar por nombre"
+        debounce="500"
+        class="custom-search-bar"
+      ></ion-searchbar>
+
+      <div class="filter-wrapper">
+        <ion-button
+          fill="solid"
+          class="custom-button btn-filtros"
+          (click)="toggleFilterPopup($event)"
+        >
+          Filtros
+        </ion-button>
+        
+        <div class="filter-popup" *ngIf="isFilterPopupOpen" (click)="$event.stopPropagation()">
+          <div class="filter-header">
+            <h3>Pago</h3>
+          </div>
+          <div class="filter-options">
+            <label class="filter-option">
+              <input 
+                type="radio" 
+                name="pagoFilter" 
+                value=""
+                [(ngModel)]="selectedFilter"
+              />
+              <span>Todos</span>
+            </label>
+            <label class="filter-option">
+              <input 
+                type="radio" 
+                name="pagoFilter" 
+                value="Pagado"
+                [(ngModel)]="selectedFilter"
+              />
+              <span>Pagado</span>
+            </label>
+            <label class="filter-option">
+              <input 
+                type="radio" 
+                name="pagoFilter" 
+                value="Pendiente"
+                [(ngModel)]="selectedFilter"
+              />
+              <span>Pendiente</span>
+            </label>
+          </div>
+          <div class="filter-actions">
+            <ion-button
+              (click)="applyFilter()"
+              fill="solid"
+              class="apply-filter-button"
+            >
+              Aplicar
+            </ion-button>
+          </div>
+        </div>
+      </div>
+
+      <ion-button
+        fill="solid"
+        class="custom-button btn-modificar"
+        (click)="toggleEditMode()"
+      >
+        {{ isEditMode ? 'Cancelar' : 'Modificar' }}
+      </ion-button>
+
+      <ion-button
+        *ngIf="isEditMode"
+        fill="solid"
+        class="custom-button btn-guardar"
+        (click)="saveChanges()"
+      >
+        Guardar
+      </ion-button>
+    </div>
+  </div>
+
+  <ion-card class="data-card">
+    <ion-card-content class="data-content-area">
+
+      <!-- Modo Vista Normal -->
+      <div class="table-container" *ngIf="!isEditMode">
+        <div class="table-header">
+          <div class="header-cell">Id</div>
+          <div class="header-cell">Nombre</div>
+          <div class="header-cell">Apellidos</div>
+          <div class="header-cell">Estudiante</div>
+          <div class="header-cell">Correo</div>
+          <div class="header-cell">Teléfono</div>
+          <div class="header-cell">Membresía</div>
+          <div class="header-cell">Última Sesión</div>
+          <div class="header-cell">Pago</div>
+        </div>
+
+        <div class="table-row" *ngFor="let tutor of filteredTutors; let i = index">
+          <div class="data-cell">{{ tutor.id }}</div>
+          <div class="data-cell">{{ tutor.nombre }}</div>
+          <div class="data-cell">{{ tutor.apellidos }}</div>
+          <div class="data-cell">{{ tutor.estudiante }}</div>
+          <div class="data-cell">{{ tutor.correo }}</div>
+          <div class="data-cell">{{ tutor.telefono }}</div>
+          <div class="data-cell">{{ tutor.membresia }}</div>
+          <div class="data-cell">{{ tutor.ultimaSesion }}</div>
+          <div class="data-cell" [class.pago-pendiente]="tutor.pago === 'Pendiente'" [class.pago-pagado]="tutor.pago === 'Pagado'">
+            {{ tutor.pago }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Modo Edición -->
+      <div class="table-container" *ngIf="isEditMode">
+        <div class="table-header">
+          <div class="header-cell">Id</div>
+          <div class="header-cell">Nombre</div>
+          <div class="header-cell">Apellidos</div>
+          <div class="header-cell">Estudiante</div>
+          <div class="header-cell">Correo</div>
+          <div class="header-cell">Teléfono</div>
+          <div class="header-cell">Membresía</div>
+          <div class="header-cell">Última Sesión</div>
+          <div class="header-cell">Pago</div>
+        </div>
+
+        <div class="table-row" *ngFor="let tutor of filteredTutors; let i = index">
+          <div class="data-cell">{{ tutor.id }}</div>
+          <div class="data-cell">{{ tutor.nombre }}</div>
+          <div class="data-cell">{{ tutor.apellidos }}</div>
+          
+          <!-- Columna Estudiante - Editable con popup -->
+          <div class="data-cell editable-cell">
+            <button class="select-student-btn" (click)="openStudentPopup(tutor, $event)">
+              {{ tutor.estudiante || 'Seleccionar' }}
+            </button>
+          </div>
+          
+          <div class="data-cell">{{ tutor.correo }}</div>
+          <div class="data-cell">{{ tutor.telefono }}</div>
+          
+          <!-- Columna Membresía - Se actualiza automáticamente -->
+          <div class="data-cell">{{ tutor.membresia }}</div>
+          
+          <div class="data-cell">{{ tutor.ultimaSesion }}</div>
+          
+          <!-- Columna Pago - Editable con select -->
+          <div class="data-cell editable-cell">
+            <select 
+              [(ngModel)]="tutor.pago" 
+              (change)="onPagoChange(tutor)"
+              class="pago-select"
+              [class.pago-pendiente]="tutor.pago === 'Pendiente'" 
+              [class.pago-pagado]="tutor.pago === 'Pagado'"
+            >
+              <option value="Pendiente">Pendiente</option>
+              <option value="Pagado">Pagado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="filteredTutors.length === 0" class="no-results">
+        <ion-text color="medium">
+          <p>No se encontraron tutores que coincidan con la búsqueda.</p>
+        </ion-text>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Popup para seleccionar estudiante -->
+  <div class="student-popup-overlay" *ngIf="isStudentPopupOpen" (click)="closeStudentPopup()">
+    <div class="student-popup" (click)="$event.stopPropagation()">
+      <div class="popup-header">
+        <h3>Seleccionar Estudiante</h3>
+      </div>
+      
+      <div class="search-container">
+        <ion-searchbar
+          [(ngModel)]="studentSearchQuery"
+          (ionInput)="filterStudents()"
+          placeholder="Buscar"
+          debounce="300"
+          class="student-search"
+        ></ion-searchbar>
+      </div>
+
+      <div class="student-list">
+        <div 
+          class="student-item" 
+          *ngFor="let student of filteredStudents"
+          [class.selected]="selectedStudent?.id === student.id"
+          (click)="selectStudent(student)"
+        >
+          <div class="student-name">{{ student.nombre }}</div>
+          <div class="student-info">{{ student.estudiante }}</div>
+        </div>
+      </div>
+
+      <div class="popup-actions">
+        <ion-button
+          (click)="assignStudent()"
+          fill="solid"
+          class="assign-button"
+          [disabled]="!selectedStudent"
+        >
+          Asignar
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</div>
