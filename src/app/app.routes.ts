@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { publicGuard } from './guards/public.guard';
 import { AdminPage } from './admin/admin.page';
+import { CommuniquesComponent } from './admin/communiques/communiques.component';
 
 export const routes: Routes = [
   {
@@ -69,7 +70,11 @@ export const routes: Routes = [
         loadComponent: () => import('./admin/tutor/tutor.component').then(m => m.TutorComponent) 
       },
 
-      { path: 'comunicados', loadComponent: () => import('./admin/placeholders/placeholder/placeholder.page').then(m => m.PlaceholderPage) },
+      { 
+        path: 'comunicados',
+        loadComponent: () => import('./admin/communiques/communiques.component').then(m => m.CommuniquesComponent) 
+      },
+
       { path: 'productos', loadComponent: () => import('./admin/placeholders/placeholder/placeholder.page').then(m => m.PlaceholderPage) },
     ],
   },

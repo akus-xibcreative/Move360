@@ -1,0 +1,377 @@
+// Colores de uso local
+$button-color: #84B6F4;
+$button-nuevo: #84B6F4;
+$card-shadow-color: rgba(0, 0, 0, 0.05);
+$text-dark: #1a202c;
+$text-medium: #4a5568;
+
+.communiques-container {
+  padding: 0;
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 25px;
+
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0 0 15px 0;
+  }
+
+  .actions-row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+
+    .custom-button {
+      --border-radius: 12px;
+      --padding-start: 20px;
+      --padding-end: 20px;
+      text-transform: none;
+      font-weight: 600;
+      height: 44px;
+
+      &.btn-modificar {
+        --background: #{$button-color};
+      }
+
+      &.btn-guardar {
+        --background: #{$button-color};
+      }
+
+      &.btn-nuevo {
+        --background: #{$button-nuevo};
+      }
+    }
+  }
+}
+
+.date-selector-container {
+  position: relative;
+  flex-grow: 1;
+}
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border-radius: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .nav-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #f7fafc;
+    }
+
+    ion-icon {
+      font-size: 20px;
+      color: $text-medium;
+    }
+  }
+
+  .date-range {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    gap: 12px;
+
+    span {
+      font-size: 14px;
+      font-weight: 600;
+      color: $text-dark;
+    }
+
+    .calendar-button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #f7fafc;
+      }
+
+      ion-icon {
+        font-size: 20px;
+        color: $button-color;
+      }
+    }
+  }
+}
+
+.calendar-popup {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  z-index: 1000;
+  width: 320px;
+
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 16px 0;
+    border-bottom: 1px solid #e2e8f0;
+
+    .month-nav {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: $text-medium;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #f7fafc;
+      }
+    }
+
+    .month-year {
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-dark;
+      text-transform: capitalize;
+    }
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+
+    .weekday {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: $text-medium;
+      padding: 8px 4px;
+    }
+
+    .calendar-day {
+      text-align: center;
+      padding: 10px 4px;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: $text-dark;
+
+      &:hover:not(.empty) {
+        background-color: $button-color;
+        color: white;
+      }
+
+      &.empty {
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      &.selected {
+        background-color: rgba($button-color, 0.2);
+        color: $button-color;
+        font-weight: 600;
+      }
+
+      &.today {
+        border: 2px solid $button-color;
+        font-weight: 600;
+      }
+
+      &.selected.today {
+        background-color: rgba($button-color, 0.3);
+      }
+    }
+  }
+}
+
+.data-card {
+  --background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px #{$card-shadow-color};
+  margin: 0;
+  padding: 20px;
+
+  .data-content-area {
+    padding: 0;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table-header, .table-row {
+  display: grid;
+  grid-template-columns: 0.4fr 1.2fr 2.5fr 0.9fr 0.9fr;
+  align-items: center;
+  padding: 0;
+  gap: 12px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(5, minmax(120px, 1fr));
+  }
+}
+
+.table-header {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e2e8f0;
+  font-weight: 700;
+  color: $text-dark;
+  border-radius: 8px 8px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-cell {
+  padding: 12px 10px;
+  text-align: left;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.table-row {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f7fafc;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.data-cell {
+  padding: 12px 10px;
+  color: $text-medium;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.description-cell {
+    white-space: normal;
+    line-height: 1.5;
+  }
+
+  &.editable-cell {
+    padding: 8px 10px;
+  }
+}
+
+.no-results {
+  padding: 40px 20px;
+  text-align: center;
+
+  p {
+    font-size: 15px;
+    color: $text-medium;
+    margin: 0;
+  }
+}
+
+.cell-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  font-size: 13px;
+  color: $text-dark;
+  background-color: white;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: $button-color;
+    box-shadow: 0 0 0 3px rgba(132, 182, 244, 0.1);
+  }
+}
+
+.cell-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  font-size: 13px;
+  color: $text-dark;
+  background-color: white;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: $button-color;
+    box-shadow: 0 0 0 3px rgba(132, 182, 244, 0.1);
+  }
+}
+
+.cell-select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  font-size: 13px;
+  color: $text-dark;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: $button-color;
+    box-shadow: 0 0 0 3px rgba(132, 182, 244, 0.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .header-actions {
+    .actions-row {
+      flex-direction: column;
+      align-items: stretch;
+
+      .date-selector {
+        width: 100%;
+      }
+
+      .custom-button {
+        width: 100%;
+      }
+    }
+  }
+
+  .table-container {
+    overflow-x: scroll;
+  }
+}

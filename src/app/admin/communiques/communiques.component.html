@@ -1,0 +1,225 @@
+<div class="communiques-container">
+  <div class="header-actions">
+    <ion-text color="dark">
+      <h2 class="page-title">Comunicados</h2>
+    </ion-text>
+
+    <div class="actions-row">
+      <div class="date-selector-container">
+        <div class="date-selector">
+          <button class="nav-button" (click)="previousWeek()">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </button>
+          
+          <div class="date-range">
+            <span>{{ currentWeekRange }}</span>
+            <button class="calendar-button" (click)="toggleCalendar($event)">
+              <ion-icon name="calendar-outline" class="calendar-icon"></ion-icon>
+            </button>
+          </div>
+
+          <button class="nav-button" (click)="nextWeek()">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </button>
+        </div>
+
+        <div class="calendar-popup" *ngIf="isCalendarOpen" (click)="$event.stopPropagation()">
+          <div class="calendar-header">
+            <button class="month-nav" (click)="previousMonth()">
+              <ion-icon name="chevron-back-outline"></ion-icon>
+            </button>
+            <span class="month-year">{{ currentMonthYear }}</span>
+            <button class="month-nav" (click)="nextMonth()">
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
+          </div>
+
+          <div class="calendar-grid">
+            <div class="weekday" *ngFor="let day of weekDays">{{ day }}</div>
+            <div 
+              class="calendar-day" 
+              *ngFor="let day of calendarDays"
+              [class.empty]="!day.date"
+              [class.selected]="isDateInCurrentWeek(day.date)"
+              [class.today]="isToday(day.date)"
+              (click)="selectDate(day.date)"
+            >
+              {{ day.day }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ion-button
+        *ngIf="!isNewMode"
+        fill="solid"
+        class="custom-button btn-modificar"
+        (click)="toggleEditMode()"
+      >
+        {{ isEditMode ? 'Cancelar' : 'Modificar' }}
+      </ion-button>
+
+      <ion-button
+        *ngIf="isNewMode"
+        fill="solid"
+        class="custom-button btn-modificar"
+        (click)="cancelNewMode()"
+      >
+        Cancelar
+      </ion-button>
+
+      <ion-button
+        *ngIf="isEditMode || isNewMode"
+        fill="solid"
+        class="custom-button btn-guardar"
+        (click)="saveChanges()"
+      >
+        Guardar
+      </ion-button>
+
+      <ion-button
+        *ngIf="!isNewMode"
+        fill="solid"
+        class="custom-button btn-nuevo"
+        (click)="newCommunique()"
+      >
+        Nuevo
+      </ion-button>
+    </div>
+  </div>
+
+  <ion-card class="data-card">
+    <ion-card-content class="data-content-area">
+
+      <div class="table-container" *ngIf="!isEditMode && !isNewMode">
+        <div class="table-header">
+          <div class="header-cell">Id</div>
+          <div class="header-cell">Nombre</div>
+          <div class="header-cell">Descripción</div>
+          <div class="header-cell">Fecha</div>
+          <div class="header-cell">Audiencia</div>
+        </div>
+
+        <div class="table-row" *ngFor="let comm of filteredCommuniques">
+          <div class="data-cell">{{ comm.id }}</div>
+          <div class="data-cell">{{ comm.nombre }}</div>
+          <div class="data-cell description-cell">{{ comm.descripcion }}</div>
+          <div class="data-cell">{{ comm.fecha }}</div>
+          <div class="data-cell">{{ comm.audiencia }}</div>
+        </div>
+
+        <div *ngIf="filteredCommuniques.length === 0" class="no-results">
+          <ion-text color="medium">
+            <p>No hay comunicados para esta semana.</p>
+          </ion-text>
+        </div>
+      </div>
+
+      <div class="table-container" *ngIf="isEditMode">
+        <div class="table-header">
+          <div class="header-cell">Id</div>
+          <div class="header-cell">Nombre</div>
+          <div class="header-cell">Descripción</div>
+          <div class="header-cell">Fecha</div>
+          <div class="header-cell">Audiencia</div>
+        </div>
+
+        <div class="table-row" *ngFor="let comm of filteredCommuniques">
+          <div class="data-cell">{{ comm.id }}</div>
+          
+          <div class="data-cell editable-cell">
+            <input 
+              type="text" 
+              [(ngModel)]="comm.nombre" 
+              class="cell-input"
+            />
+          </div>
+          
+          <div class="data-cell editable-cell">
+            <textarea 
+              [(ngModel)]="comm.descripcion" 
+              class="cell-textarea"
+              rows="2"
+            ></textarea>
+          </div>
+          
+          <div class="data-cell editable-cell">
+            <input 
+              type="date" 
+              [value]="convertToInputDate(comm.fecha)" 
+              (change)="updateDate(comm, $event)"
+              class="cell-input"
+            />
+          </div>
+          
+          <div class="data-cell editable-cell">
+            <select 
+              [(ngModel)]="comm.audiencia" 
+              class="cell-select"
+            >
+              <option value="Todos">Todos</option>
+              <option value="Estudiantes">Estudiantes</option>
+              <option value="Profesores">Profesores</option>
+              <option value="Tutores">Tutores</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container" *ngIf="isNewMode">
+        <div class="table-header">
+          <div class="header-cell">Id</div>
+          <div class="header-cell">Nombre</div>
+          <div class="header-cell">Descripción</div>
+          <div class="header-cell">Fecha</div>
+          <div class="header-cell">Audiencia</div>
+        </div>
+
+        <div class="table-row">
+          <div class="data-cell">{{ newCommuniqueData.id }}</div>
+          
+          <div class="data-cell editable-cell">
+            <input 
+              type="text" 
+              [(ngModel)]="newCommuniqueData.nombre" 
+              class="cell-input"
+              placeholder="Nombre del comunicado"
+            />
+          </div>
+          
+          <div class="data-cell editable-cell">
+            <textarea 
+              [(ngModel)]="newCommuniqueData.descripcion" 
+              class="cell-textarea"
+              rows="2"
+              placeholder="Descripción del comunicado"
+            ></textarea>
+          </div>
+          
+          <!-- Columna Fecha - Editable -->
+          <div class="data-cell editable-cell">
+            <input 
+              type="date" 
+              [value]="convertToInputDate(newCommuniqueData.fecha)" 
+              (change)="updateDate(newCommuniqueData, $event)"
+              class="cell-input"
+            />
+          </div>
+          
+          <div class="data-cell editable-cell">
+            <select 
+              [(ngModel)]="newCommuniqueData.audiencia" 
+              class="cell-select"
+            >
+              <option value="Todos">Todos</option>
+              <option value="Estudiantes">Estudiantes</option>
+              <option value="Profesores">Profesores</option>
+              <option value="Tutores">Tutores</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+</div>
