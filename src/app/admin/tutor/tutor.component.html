@@ -20,34 +20,34 @@
         >
           Filtros
         </ion-button>
-        
+
         <div class="filter-popup" *ngIf="isFilterPopupOpen" (click)="$event.stopPropagation()">
           <div class="filter-header">
             <h3>Pago</h3>
           </div>
           <div class="filter-options">
             <label class="filter-option">
-              <input 
-                type="radio" 
-                name="pagoFilter" 
+              <input
+                type="radio"
+                name="pagoFilter"
                 value=""
                 [(ngModel)]="selectedFilter"
               />
               <span>Todos</span>
             </label>
             <label class="filter-option">
-              <input 
-                type="radio" 
-                name="pagoFilter" 
+              <input
+                type="radio"
+                name="pagoFilter"
                 value="Pagado"
                 [(ngModel)]="selectedFilter"
               />
               <span>Pagado</span>
             </label>
             <label class="filter-option">
-              <input 
-                type="radio" 
-                name="pagoFilter" 
+              <input
+                type="radio"
+                name="pagoFilter"
                 value="Pendiente"
                 [(ngModel)]="selectedFilter"
               />
@@ -104,15 +104,20 @@
 
         <div class="table-row" *ngFor="let tutor of filteredTutors; let i = index">
           <div class="data-cell">{{ tutor.id }}</div>
-          <div class="data-cell">{{ tutor.nombre }}</div>
-          <div class="data-cell">{{ tutor.apellidos }}</div>
-          <div class="data-cell">{{ tutor.estudiante }}</div>
-          <div class="data-cell">{{ tutor.correo }}</div>
-          <div class="data-cell">{{ tutor.telefono }}</div>
-          <div class="data-cell">{{ tutor.membresia }}</div>
-          <div class="data-cell">{{ tutor.ultimaSesion }}</div>
+          <div class="data-cell">{{ tutor.firstName }}</div>
+          <div class="data-cell">{{ tutor.lastName }}</div>
+          <div class="data-cell">{{ tutor.studentNames || '-' }}</div>
+          <div class="data-cell">{{ tutor.email }}</div>
+          <div class="data-cell">{{ tutor.phone || '-' }}</div>
+          <div class="data-cell">
+            <span *ngIf="tutor.membership_start && tutor.membership_end">
+              {{ tutor.membership_start | date:'dd/MM/yyyy' }} - {{ tutor.membership_end | date:'dd/MM/yyyy' }}
+            </span>
+            <span *ngIf="!tutor.membership_start || !tutor.membership_end">-</span>
+          </div>
+          <div class="data-cell">{{ tutor.ultimaSesion || '-' }}</div>
           <div class="data-cell" [class.pago-pendiente]="tutor.pago === 'Pendiente'" [class.pago-pagado]="tutor.pago === 'Pagado'">
-            {{ tutor.pago }}
+            {{ tutor.pago || 'Pendiente' }}
           </div>
         </div>
       </div>
@@ -133,31 +138,36 @@
 
         <div class="table-row" *ngFor="let tutor of filteredTutors; let i = index">
           <div class="data-cell">{{ tutor.id }}</div>
-          <div class="data-cell">{{ tutor.nombre }}</div>
-          <div class="data-cell">{{ tutor.apellidos }}</div>
-          
+          <div class="data-cell">{{ tutor.firstName }}</div>
+          <div class="data-cell">{{ tutor.lastName }}</div>
+
           <!-- Columna Estudiante - Editable con popup -->
           <div class="data-cell editable-cell">
             <button class="select-student-btn" (click)="openStudentPopup(tutor, $event)">
-              {{ tutor.estudiante || 'Seleccionar' }}
+              {{ tutor.studentNames || 'Seleccionar' }}
             </button>
           </div>
-          
-          <div class="data-cell">{{ tutor.correo }}</div>
-          <div class="data-cell">{{ tutor.telefono }}</div>
-          
-          <!-- Columna Membresía - Se actualiza automáticamente -->
-          <div class="data-cell">{{ tutor.membresia }}</div>
-          
+
+          <div class="data-cell">{{ tutor.email }}</div>
+          <div class="data-cell">{{ tutor.phone || '-' }}</div>
+
+          <!-- Columna Membresía - Muestra fechas -->
+          <div class="data-cell">
+            <span *ngIf="tutor.membership_start && tutor.membership_end">
+              {{ tutor.membership_start | date:'dd/MM/yyyy' }} - {{ tutor.membership_end | date:'dd/MM/yyyy' }}
+            </span>
+            <span *ngIf="!tutor.membership_start || !tutor.membership_end">-</span>
+          </div>
+
           <div class="data-cell">{{ tutor.ultimaSesion }}</div>
-          
+
           <!-- Columna Pago - Editable con select -->
           <div class="data-cell editable-cell">
-            <select 
-              [(ngModel)]="tutor.pago" 
+            <select
+              [(ngModel)]="tutor.pago"
               (change)="onPagoChange(tutor)"
               class="pago-select"
-              [class.pago-pendiente]="tutor.pago === 'Pendiente'" 
+              [class.pago-pendiente]="tutor.pago === 'Pendiente'"
               [class.pago-pagado]="tutor.pago === 'Pagado'"
             >
               <option value="Pendiente">Pendiente</option>
@@ -182,7 +192,7 @@
       <div class="popup-header">
         <h3>Seleccionar Estudiante</h3>
       </div>
-      
+
       <div class="search-container">
         <ion-searchbar
           [(ngModel)]="studentSearchQuery"
@@ -194,25 +204,23 @@
       </div>
 
       <div class="student-list">
-        <div 
-          class="student-item" 
+        <div
+          class="student-item"
           *ngFor="let student of filteredStudents"
-          [class.selected]="selectedStudent?.id === student.id"
+          [class.selected]="isStudentSelected(student)"
           (click)="selectStudent(student)"
         >
-          <div class="student-name">{{ student.nombre }}</div>
-          <div class="student-info">{{ student.estudiante }}</div>
+          <div class="student-name">{{ student.firstName }} {{ student.lastName }}</div>
+          <div class="student-info">{{ student.email }}</div>
         </div>
-      </div>
-
-      <div class="popup-actions">
+      </div>      <div class="popup-actions">
         <ion-button
           (click)="assignStudent()"
           fill="solid"
           class="assign-button"
-          [disabled]="!selectedStudent"
+          [disabled]="selectedStudents.length === 0"
         >
-          Asignar
+          Asignar ({{ selectedStudents.length }})
         </ion-button>
       </div>
     </div>

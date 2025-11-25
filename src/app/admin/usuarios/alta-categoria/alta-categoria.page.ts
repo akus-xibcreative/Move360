@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline } from 'ionicons/icons';
 import { FirestoreService } from '../../../firebase/firestore.service';
+import { AuthenticationService } from '../../../firebase/authentication.service';
 
 addIcons({ searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline });
 
@@ -46,7 +47,10 @@ export class AltaCategoriaPage implements OnInit {
   isDeleteModalOpen = false;
   itemToDelete: any = null;
 
-  constructor(private firestoreService: FirestoreService) {
+  constructor(
+    private firestoreService: FirestoreService,
+    private authService: AuthenticationService
+  ) {
       addIcons({searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline}); }
 
   async ngOnInit() {
@@ -58,10 +62,13 @@ export class AltaCategoriaPage implements OnInit {
       this.uiState = 'skeleton';
       const categories = await this.firestoreService.getCategories();
 
-      if (categories.length === 0) {
+      // Filtrar solo categorías activas (metadata.delete_flag === true)
+      const activeCategories = categories.filter(cat => cat.metadata?.delete_flag === true);
+
+      if (activeCategories.length === 0) {
         this.uiState = 'empty';
       } else {
-        this.allCategories = categories;
+        this.allCategories = activeCategories;
         this.filteredCategories = [...this.allCategories];
         this.uiState = 'view';
       }
@@ -98,9 +105,27 @@ export class AltaCategoriaPage implements OnInit {
 
       this.uiState = 'skeleton';
 
+      const adminUser = this.authService.getCurrentUser();
+      let createdByName = 'admin';
+      if (adminUser) {
+        const adminData = await this.firestoreService.getUserData(adminUser.uid);
+        if (adminData) {
+          createdByName = `${adminData['firstName']} ${adminData['lastName']}`;
+        }
+      }
+
+      const timestamp = new Date();
+
       const categoryData = {
         desc: this.newCategory.desc,
-        seq: Number(this.newCategory.seq)
+        seq: Number(this.newCategory.seq),
+        metadata: {
+          created_at: timestamp,
+          updated_at: timestamp,
+          created_by: createdByName,
+          updated_by: createdByName,
+          delete_flag: true
+        }
       };
 
       await this.firestoreService.createCategory(this.newCategory.id.toUpperCase(), categoryData);
@@ -230,14 +255,29 @@ export class AltaCategoriaPage implements OnInit {
       }
 
       const categoryId = this.getCategoryId(this.itemToDelete);
-      console.log('Deleting category:', categoryId);
+      console.log('Marking category as deleted (soft delete):', categoryId);
 
       this.closeDeleteModal();
       this.uiState = 'skeleton';
 
-      await this.firestoreService.deleteCategory(categoryId);
+      // Obtener el nombre del usuario actual
+      const adminUser = this.authService.getCurrentUser();
+      let updatedByName = 'admin';
+      if (adminUser) {
+        const adminData = await this.firestoreService.getUserData(adminUser.uid);
+        if (adminData) {
+          updatedByName = `${adminData['firstName']} ${adminData['lastName']}`;
+        }
+      }
 
-      console.log('Category deleted successfully');
+      // Soft delete: cambiar metadata.delete_flag a false
+      await this.firestoreService.updateCategory(categoryId, {
+        'metadata.delete_flag': false,
+        'metadata.updated_at': new Date(),
+        'metadata.updated_by': updatedByName
+      });
+
+      console.log('Category marked as deleted (soft delete)');
       alert('Categoría eliminada exitosamente');
 
       await this.loadCategories();

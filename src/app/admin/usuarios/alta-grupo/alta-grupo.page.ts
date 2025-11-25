@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline } from 'ionicons/icons';
 import { FirestoreService } from '../../../firebase/firestore.service';
+import { AuthenticationService } from '../../../firebase/authentication.service';
 
 addIcons({ searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline });
 
@@ -46,7 +47,10 @@ export class AltaGrupoPage implements OnInit {
   isDeleteModalOpen = false;
   itemToDelete: any = null;
 
-  constructor(private firestoreService: FirestoreService) {
+  constructor(
+    private firestoreService: FirestoreService,
+    private authService: AuthenticationService
+  ) {
       addIcons({searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline}); }
 
   async ngOnInit() {
@@ -58,10 +62,13 @@ export class AltaGrupoPage implements OnInit {
       this.uiState = 'skeleton';
       const groups = await this.firestoreService.getGroups();
 
-      if (groups.length === 0) {
+      // Filtrar solo grupos activos (metadata.delete_flag === true)
+      const activeGroups = groups.filter(group => group.metadata?.delete_flag === true);
+
+      if (activeGroups.length === 0) {
         this.uiState = 'empty';
       } else {
-        this.allGroups = groups;
+        this.allGroups = activeGroups;
         this.filteredGroups = [...this.allGroups];
         this.uiState = 'view';
       }
@@ -98,9 +105,27 @@ export class AltaGrupoPage implements OnInit {
 
       this.uiState = 'skeleton';
 
+      const adminUser = this.authService.getCurrentUser();
+      let createdByName = 'admin';
+      if (adminUser) {
+        const adminData = await this.firestoreService.getUserData(adminUser.uid);
+        if (adminData) {
+          createdByName = `${adminData['firstName']} ${adminData['lastName']}`;
+        }
+      }
+
+      const timestamp = new Date();
+
       const groupData = {
         desc: this.newGroup.desc,
-        seq: Number(this.newGroup.seq)
+        seq: Number(this.newGroup.seq),
+        metadata: {
+          created_at: timestamp,
+          updated_at: timestamp,
+          created_by: createdByName,
+          updated_by: createdByName,
+          delete_flag: true
+        }
       };
 
       await this.firestoreService.createGroup(this.newGroup.id.toUpperCase(), groupData);
@@ -230,14 +255,29 @@ export class AltaGrupoPage implements OnInit {
       }
 
       const groupId = this.getGroupId(this.itemToDelete);
-      console.log('Deleting group:', groupId);
+      console.log('Marking group as deleted (soft delete):', groupId);
 
       this.closeDeleteModal();
       this.uiState = 'skeleton';
 
-      await this.firestoreService.deleteGroup(groupId);
+      // Obtener el nombre del usuario actual
+      const adminUser = this.authService.getCurrentUser();
+      let updatedByName = 'admin';
+      if (adminUser) {
+        const adminData = await this.firestoreService.getUserData(adminUser.uid);
+        if (adminData) {
+          updatedByName = `${adminData['firstName']} ${adminData['lastName']}`;
+        }
+      }
 
-      console.log('Group deleted successfully');
+      // Soft delete: cambiar metadata.delete_flag a false
+      await this.firestoreService.updateGroup(groupId, {
+        'metadata.delete_flag': false,
+        'metadata.updated_at': new Date(),
+        'metadata.updated_by': updatedByName
+      });
+
+      console.log('Group marked as deleted (soft delete)');
       alert('Grupo eliminado exitosamente');
 
       await this.loadGroups();

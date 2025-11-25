@@ -94,12 +94,15 @@ export class AltaUsuarioPage implements OnInit {
     try {
       const users = await this.firestoreService.getAllUsers();
 
-      if (users.length === 0) {
+      // Filtrar solo usuarios activos (metadata.delete_flag === true)
+      const activeUsers = users.filter(user => user.metadata?.delete_flag === true);
+
+      if (activeUsers.length === 0) {
         this.uiState = 'empty';
       } else {
-        this.allUsers = users;
-        this.filteredUsers = [...users];
-        console.log('Usuarios cargados:', users); // Para debug
+        this.allUsers = activeUsers;
+        this.filteredUsers = [...activeUsers];
+        console.log('Usuarios activos cargados:', activeUsers);
         this.uiState = 'view';
       }
     } catch (error) {
@@ -110,7 +113,9 @@ export class AltaUsuarioPage implements OnInit {
 
   async loadGrades() {
     try {
-      this.allGrades = await this.firestoreService.getGrades();
+      const grades = await this.firestoreService.getGrades();
+      // Filtrar solo grados activos (metadata.delete_flag === true)
+      this.allGrades = grades.filter(grade => grade.metadata?.delete_flag === true);
       console.log('Grades loaded:', this.allGrades);
     } catch (error) {
       console.error('Error loading grades:', error);
@@ -119,7 +124,9 @@ export class AltaUsuarioPage implements OnInit {
 
   async loadGroups() {
     try {
-      this.allGroups = await this.firestoreService.getGroups();
+      const groups = await this.firestoreService.getGroups();
+      // Filtrar solo grupos activos (metadata.delete_flag === true)
+      this.allGroups = groups.filter(group => group.metadata?.delete_flag === true);
       console.log('Groups loaded:', this.allGroups);
     } catch (error) {
       console.error('Error loading groups:', error);
@@ -128,7 +135,9 @@ export class AltaUsuarioPage implements OnInit {
 
   async loadCategories() {
     try {
-      this.allCategories = await this.firestoreService.getCategories();
+      const categories = await this.firestoreService.getCategories();
+      // Filtrar solo categorías activas (metadata.delete_flag === true)
+      this.allCategories = categories.filter(cat => cat.metadata?.delete_flag === true);
       console.log('Categories loaded:', this.allCategories);
     } catch (error) {
       console.error('Error loading categories:', error);
@@ -226,14 +235,12 @@ export class AltaUsuarioPage implements OnInit {
         category_id: this.newUser.category_id || '',
         grade_id: this.newUser.grade_id || '',
         group_id: this.newUser.group_id || '',
-        status: true,
-        delete_flag: false,
         metadata: {
           created_at: timestamp,
           updated_at: timestamp,
           created_by: createdByName,
           updated_by: createdByName,
-          delete_flag: false
+          delete_flag: true
         }
       };
 
@@ -321,7 +328,7 @@ export class AltaUsuarioPage implements OnInit {
 
   // Método auxiliar para obtener el ID del usuario
   getUserId(user: any): string {
-    return user.id || user.uid || user.email; 
+    return user.id || user.uid || user.email;
   }
 
   // Verificar si es una de las últimas 2 filas
@@ -387,19 +394,6 @@ export class AltaUsuarioPage implements OnInit {
 
       this.uiState = 'skeleton';
 
-      const adminUser = this.authService.getCurrentUser();
-      const adminUid = adminUser?.uid || 'admin';
-
-      let updatedByName = 'admin';
-      if (adminUid !== 'admin') {
-        const adminData = await this.firestoreService.getUserData(adminUid);
-        if (adminData) {
-          updatedByName = `${adminData['firstName']} ${adminData['lastName']}`;
-        }
-      }
-
-      const timestamp = new Date();
-
       const userData = {
         firstName: this.editingUser.firstName,
         secondName: this.editingUser.secondName || '',
@@ -407,11 +401,7 @@ export class AltaUsuarioPage implements OnInit {
         phone: this.editingUser.phone || '',
         category_id: this.editingUser.category_id || '',
         grade_id: this.editingUser.grade_id || '',
-        group_id: this.editingUser.group_id || '',
-        metadata: {
-          updated_at: timestamp,
-          updated_by: updatedByName
-        }
+        group_id: this.editingUser.group_id || ''
       };
 
       await this.firestoreService.updateUser(
@@ -451,14 +441,29 @@ export class AltaUsuarioPage implements OnInit {
       }
 
       const userId = this.getUserId(this.userToDelete);
-      console.log('Deleting user permanently:', userId, this.userToDelete);
+      console.log('Marking user as deleted (soft delete):', userId, this.userToDelete);
 
       this.closeDeleteModal();
       this.uiState = 'skeleton';
 
-      await this.firestoreService.deleteUser(userId);
+      // Obtener el nombre del usuario actual
+      const adminUser = this.authService.getCurrentUser();
+      let updatedByName = 'admin';
+      if (adminUser) {
+        const adminData = await this.firestoreService.getUserData(adminUser.uid);
+        if (adminData) {
+          updatedByName = `${adminData['firstName']} ${adminData['lastName']}`;
+        }
+      }
 
-      console.log('User deleted permanently from database');
+      // Soft delete: cambiar metadata.delete_flag a false y actualizar metadata
+      await this.firestoreService.updateUser(userId, {
+        'metadata.delete_flag': false,
+        'metadata.updated_at': new Date(),
+        'metadata.updated_by': updatedByName
+      });
+
+      console.log('User marked as deleted (soft delete)');
       alert('Usuario eliminado exitosamente');
 
       await this.loadUsers();

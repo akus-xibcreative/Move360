@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline } from 'ionicons/icons';
 import { FirestoreService } from '../../../firebase/firestore.service';
+import { AuthenticationService } from '../../../firebase/authentication.service';
 
 addIcons({ searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline });
 
@@ -45,7 +46,10 @@ export class AltaGradoPage implements OnInit {
   isDeleteModalOpen = false;
   itemToDelete: any = null;
 
-  constructor(private firestoreService: FirestoreService) {
+  constructor(
+    private firestoreService: FirestoreService,
+    private authService: AuthenticationService
+  ) {
       addIcons({searchOutline, closeCircleOutline, ellipsisVertical, createOutline, trashOutline, warningOutline});
 
   }
@@ -59,10 +63,13 @@ export class AltaGradoPage implements OnInit {
       this.uiState = 'skeleton';
       const grades = await this.firestoreService.getGrades();
 
-      if (grades.length === 0) {
+      // Filtrar solo grados activos (metadata.delete_flag === true)
+      const activeGrades = grades.filter(grade => grade.metadata?.delete_flag === true);
+
+      if (activeGrades.length === 0) {
         this.uiState = 'empty';
       } else {
-        this.allGrades = grades;
+        this.allGrades = activeGrades;
         this.filteredGrades = [...this.allGrades];
         this.uiState = 'view';
       }
@@ -99,9 +106,27 @@ export class AltaGradoPage implements OnInit {
 
       this.uiState = 'skeleton';
 
+      const adminUser = this.authService.getCurrentUser();
+      let createdByName = 'admin';
+      if (adminUser) {
+        const adminData = await this.firestoreService.getUserData(adminUser.uid);
+        if (adminData) {
+          createdByName = `${adminData['firstName']} ${adminData['lastName']}`;
+        }
+      }
+
+      const timestamp = new Date();
+
       const gradeData = {
         desc: this.newGrade.desc,
-        seq: Number(this.newGrade.seq)
+        seq: Number(this.newGrade.seq),
+        metadata: {
+          created_at: timestamp,
+          updated_at: timestamp,
+          created_by: createdByName,
+          updated_by: createdByName,
+          delete_flag: true
+        }
       };
 
       await this.firestoreService.createGrade(this.newGrade.id.toUpperCase(), gradeData);
@@ -231,14 +256,29 @@ export class AltaGradoPage implements OnInit {
       }
 
       const gradeId = this.getGradeId(this.itemToDelete);
-      console.log('Deleting grade:', gradeId);
+      console.log('Marking grade as deleted (soft delete):', gradeId);
 
       this.closeDeleteModal();
       this.uiState = 'skeleton';
 
-      await this.firestoreService.deleteGrade(gradeId);
+      // Obtener el nombre del usuario actual
+      const adminUser = this.authService.getCurrentUser();
+      let updatedByName = 'admin';
+      if (adminUser) {
+        const adminData = await this.firestoreService.getUserData(adminUser.uid);
+        if (adminData) {
+          updatedByName = `${adminData['firstName']} ${adminData['lastName']}`;
+        }
+      }
 
-      console.log('Grade deleted successfully');
+      // Soft delete: cambiar metadata.delete_flag a false
+      await this.firestoreService.updateGrade(gradeId, {
+        'metadata.delete_flag': false,
+        'metadata.updated_at': new Date(),
+        'metadata.updated_by': updatedByName
+      });
+
+      console.log('Grade marked as deleted (soft delete)');
       alert('Grado eliminado exitosamente');
 
       await this.loadGrades();
